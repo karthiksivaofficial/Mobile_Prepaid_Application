@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recharge Plans</title>
+    <link rel="stylesheet" href="./css/planstyle.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+
+<header class="header">
+    <img src="./img/logo2.webp" alt="logo" class="logo">
+    <h1 class="site-title">RechargeFlow Recharge Service</h1>
+    <p class="header-welcome">Fast & Secure Recharge Anytime, Anywhere!</p>
+</header>
+
+<nav class="sticky-top navbar navbar-expand-md" aria-label="Third navbar example" id="main-nav">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03"
+                aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarsExample03">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link" id="home">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item" id="nav-item-prepaid">
+                    <a class="nav-link dropdown-toggle show" href="#" data-bs-toggle="dropdown" aria-expanded="true">
+                        Prepaid
+                    </a>
+                    <ul class="dropdown-menu" data-bs-popper="static" id="dropdown-menu">
+                        <div class="dropdown-item-group">
+                            <div class="row-items">
+                                <a href="#">Mobile Recharge</a>
+                                <a href="#">Recommended packs</a>
+                                <a href="#">Data Plans</a>
+                                <a href="#">Disney+ Hotstar Offer</a>
+                                <a href="#">Only Calling Plan</a>
+                            </div>
+                        </div>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="./plans.html" class="nav-link">
+                        <i class="fas fa-cogs"></i> Plans
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./support.html" class="nav-link" id="support">
+                        <i class="fas fa-headset"></i> Support
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                             class="bi bi-search" viewBox="0 0 16 16" color="white">
+                            <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item dropdown" id="profile-dropdown">
+                    <a href="#" class="nav-link" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                             class="bi bi-person-circle" viewBox="0 0 16 16" color="white" id="profile-icon">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                            <path fill-rule="evenodd"
+                                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                        </svg>
+                        <span id="username-display"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" id="login-feature">
+                        <li><a class="dropdown-item" href="login.html">Login</a></li>
+                        <li><a class="dropdown-item" href="signup.html">Signup</a></li>
+                    </ul>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" id="logout-feature" style="display: none;">
+                        <li><a class="dropdown-item" href="#" id="logout-link">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Bootstrap Alert for Logout Message -->
+<div id="logout-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+    You are logging out...
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="container py-5" id="change-number">
+    <div class="row">
+        <aside class="col-lg-3 mb-4">
+                <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+                    <h5 class="fw-bold mb-3">Recharging for</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fs-6 fw-bold" id="phone-number">95xxxxxxx</span>
+                        <a class="text-primary" href="#" id="change-number-link">Change</a>
+                    </div>
+                </div>
+
+            <!-- Modal for changing the phone number -->
+            <div id="change-number-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="modal-title" class="modal-title">Enter New Phone Number</h5>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" id="new-phone-number" class="form-control" placeholder="Enter new phone number" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancel-button" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-success" id="save-number">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h5 class="fw-bold mb-3">Search Plans</h5>
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control" placeholder="Search" id="searchInput" />
+                    <button class="btn btn-light border" type="button" id="filterBtn"><i class="fa-solid fa-filter"></i></button>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-md filter-container" id="filter-container" style="display: none;"> <!-- Initially hidden -->
+                <h5 class="fw-bold mb-3">Price Range</h5>
+                <input type="range" id="price-range" class="form-range" min="0" max="1000" step="10" value="1000">
+                <div class="d-flex justify-content-between">
+                    <span>₹0</span>
+                    <span>₹<span id="max-price">1000</span></span>
+                </div>
+            </div>
+        </aside>
+        <section class="col-lg-9">
+            <nav class="bg-white nav nav-pills gap-2 mb-3" style="border-radius: 30px">
+                <a class="nav-link active" id="recommendedTab" href="#">Recommended</a>
+                <a class="nav-link" id="unlimitedTab" href="#">Unlimited</a>
+                <a class="nav-link" id="popularTab" href="#">Popular</a>
+                <a class="nav-link" id="basicTab" href="#">Basic</a>
+                <a class="nav-link" id="topupTab" href="#">Top-up</a>
+            </nav>
+            <hr/>
+            <div id="no-plans-message" class="alert alert-warning" style="display: none;background-color: #fd4e4e;color: white;">
+                No plans available in the given price range.
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+                <h3 class="h6 fw-bold" id="plan-title">Recommended Plans</h3>
+                <div class="row" id="plans-list">
+                    <div class="col-md-4 mb-3 plan-card" data-price="399" >
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <h5 class="card-title fw-bold mb-0">₹399</h5>
+                                <a href="#" class="text-primary text-decoration-none">View Details</a>
+                            </div>
+                            <p class="card-text text-muted">28 Days | 2.5GB/Day</p>
+                            <button class="btn btn-primary w-100">Buy</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 plan-card" data-price="599">
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <h5 class="card-title fw-bold mb-0">₹599</h5>
+                                <a href="#" class="text-primary text-decoration-none">View Details</a>
+                            </div>
+                            <p class="card-text text-muted">56 Days | 2.5GB/Day</p>
+                            <button class="btn btn-primary w-100">Buy</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 plan-card" data-price="499">
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <h5 class="card-title fw-bold mb-0">₹499</h5>
+                                <a href="#" class="text-primary text-decoration-none">View Details</a>
+                            </div>
+                            <p class="card-text text-muted">28 Days | 1.5GB/Day</p>
+                            <button class="btn btn-primary w-100">Buy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-4">
+                <div class="bg-white p-4 rounded-lg shadow-md mb-4" id="toggle-bar">
+                    <h3 class="h6 fw-bold">Top Trending True 5G Unlimited Plans</h3>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal fade" id="planDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Plan Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 id="planName"></h4>
+                <p id="planDescription"></p>
+                <ul id="planBenefits" class="list-unstyled"></ul>
+                <p id="planValidity"></p>
+                <button class="btn btn-primary w-100">Buy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const plansData = [
+        {
+            category: "2.5 GB/day Plans",
+            id: "plans-2-5gb",
+            plans: [
+                { price: 399, validity: "28 Days", data: "2.5GB/Day" },
+                { price: 599, validity: "56 Days", data: "2.5GB/Day" }
+            ]
+        },
+        {
+            category: "2 GB/day Plans",
+            id: "plans-2gb",
+            plans: [
+                { price: 349, validity: "28 Days", data: "2GB/Day" },
+                { price: 499, validity: "56 Days", data: "2GB/Day" }
+            ]
+        },
+        {
+            category: "1.5 GB/day Plans",
+            id: "plans-1-5gb",
+            plans: [
+                { price: 299, validity: "28 Days", data: "1.5GB/Day" },
+                { price: 399, validity: "56 Days", data: "1.5GB/Day" }
+            ]
+        }
+    ];
+
+    const toggleBar = document.getElementById("toggle-bar");
+    const ul = document.createElement("ul");
+    ul.classList.add("list-unstyled");
+
+    plansData.forEach(category => {
+        const listItem = document.createElement("li");
+        listItem.classList.add("d-flex", "justify-content-between", "align-items-center", "p-3", "rounded-lg", "bg-light", "mb-2", "toggle-item");
+        listItem.setAttribute("data-bs-toggle", "collapse");
+        listItem.setAttribute("data-bs-target", `#${category.id}`);
+
+        listItem.innerHTML = `
+        <span>${category.category} (${category.plans.length})</span>
+        <i class="fas fa-circle-plus toggle-icon"></i>
+    `;
+
+        const collapseDiv = document.createElement("div");
+        collapseDiv.id = category.id;
+        collapseDiv.classList.add("collapse");
+
+        const plansContainer = document.createElement("div");
+        plansContainer.classList.add("p-3");
+
+        const rowDiv = document.createElement("div");
+        rowDiv.classList.add("row");
+
+        category.plans.forEach(plan => {
+            const colDiv = document.createElement("div");
+            colDiv.classList.add("col-md-4", "mb-3", "plan-card");
+            colDiv.setAttribute("data-price", plan.price);
+
+            colDiv.innerHTML = `
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold mb-0">₹${plan.price}</h5>
+                    <a href="#" class="text-primary text-decoration-none">View Details</a>
+                </div>
+                <p class="card-text text-muted">${plan.validity} | ${plan.data}</p>
+                <button class="btn btn-primary w-100">Buy</button>
+            </div>
+        `;
+
+            rowDiv.appendChild(colDiv);
+        });
+
+        plansContainer.appendChild(rowDiv);
+        collapseDiv.appendChild(plansContainer);
+
+        ul.appendChild(listItem);
+        ul.appendChild(collapseDiv);
+    });
+
+    toggleBar.appendChild(ul);
+
+    document.getElementById('filterBtn').addEventListener('click', function() {
+        const filterContainer = document.getElementById('filter-container');
+        const currentDisplay = filterContainer.style.display;
+        filterContainer.style.display = currentDisplay === 'none' ? 'block' : 'none';
+    });
+
+    // Event listener for price range change
+    document.getElementById('price-range').addEventListener('input', function() {
+        const maxPrice = this.value;
+        document.getElementById('max-price').textContent = maxPrice; // Update the display for max price
+        filterPlans(maxPrice, document.getElementById('searchInput').value);
+    });
+
+    // Event listener for search input change
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const maxPrice = document.getElementById('price-range').value;
+        filterPlans(maxPrice, searchTerm);
+    });
+
+    // Filter function that checks both price and search term
+    function filterPlans(maxPrice, searchTerm) {
+        const plans = document.querySelectorAll('.plan-card');
+        let plansVisible = false;
+
+        plans.forEach(plan => {
+            const planPrice = parseInt(plan.getAttribute('data-price')); // Get the plan price
+            const planTitle = plan.querySelector('.card-title').textContent.toLowerCase();
+            const planDescription = plan.querySelector('.card-text').textContent.toLowerCase();
+
+            // Check if the plan satisfies both the max price and the search term
+            if (planPrice <= maxPrice && (planTitle.includes(searchTerm) || planDescription.includes(searchTerm))) {
+                plan.style.display = '';  // Show the plan
+                plansVisible = true;
+            } else {
+                plan.style.display = 'none';  // Hide the plan
+            }
+        });
+
+        // Show or hide the 'no plans available' message
+        const noPlansMessage = document.getElementById('no-plans-message');
+        if (plansVisible) {
+            noPlansMessage.style.display = 'none';
+        } else {
+            noPlansMessage.style.display = 'block';
+        }
+    }
+
+
+
+    const viewDetailButtons = document.querySelectorAll('.plan-card .text-primary');
+    viewDetailButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const planCard = button.closest('.plan-card');
+            const planTitle = planCard.querySelector('.card-title').textContent;
+            const planDescription = planCard.querySelector('.card-text').textContent;
+            const planPrice = planCard.getAttribute('data-price');
+
+            const benefits = [
+                "Unlimited Talktime",
+                "Free SMS",
+                "High-speed Data",
+                "Exclusive Offers"
+            ];
+            document.getElementById('planName').textContent = `Plan: ₹${planPrice}`;
+            document.getElementById('planDescription').textContent = planDescription;
+            document.getElementById('planValidity').textContent = `Validity: 28 Days`;  // You can modify this dynamically as well
+            const benefitsList = document.getElementById('planBenefits');
+            benefitsList.innerHTML = ""; // Clear previous benefits
+            benefits.forEach(benefit => {
+                const li = document.createElement('li');
+                li.textContent = benefit;
+                benefitsList.appendChild(li);
+            });
+            document.getElementById('buyButton').textContent = `Buy for ₹${planPrice}`;
+            document.getElementById('buyButton').onclick = function() {
+                window.location.href = './payment.html';
+            };
+            const modal = new bootstrap.Modal(document.getElementById('planDetailsModal'));
+            modal.show();
+        });
+    });
+
+    // Use event delegation to listen for clicks on dynamically added buttons
+    document.body.addEventListener("click", function(event) {
+        if (event.target && event.target.matches(".btn-primary")) {
+            window.location.href = "Recharge.html";
+        }
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const tabs = document.querySelectorAll('.nav-link');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                tab.classList.add('active');
+            });
+        });
+    });
+    document.getElementById("home").addEventListener("click", function() {
+        window.location.href = "./index.html";
+    });
+
+    const plans = {
+        recommended: [
+            { name: "₹399", description: "28 Days | 2.5GB/Day", price: "399" },
+            { name: "₹599", description: "56 Days | 2.5GB/Day", price: "599" },
+            { name: "₹499", description: "28 Days | 1.5GB/Day", price: "499" },
+        ],
+        unlimited: [
+            { name: "₹699", description: "30 Days | Unlimited Data", price: "699" },
+            { name: "₹799", description: "45 Days | Unlimited Data", price: "799" }
+        ],
+        popular: [
+            { name: "₹299", description: "28 Days | 2GB/Day", price: "299" },
+            { name: "₹499", description: "56 Days | 2GB/Day", price: "499" }
+        ],
+        basic: [
+            { name: "₹199", description: "14 Days | 1GB/Day", price: "199" },
+            { name: "₹149", description: "7 Days | 500MB/Day", price: "149" },
+            { name: "₹99", description: "3 Days | 300MB/Day", price: "99" },
+        ],
+        topup: [
+            { name: "₹50", description: "3 Days | 200MB/Day", price: "50" },
+            { name: "₹100", description: "7 Days | 500MB/Day", price: "100" },
+            { name: "₹150", description: "14 Days | 1GB/Day", price: "150" },
+        ]
+    };
+    // Function to display plans dynamically
+    function displayPlans(category) {
+        const plansList = document.getElementById("plans-list");
+        const planTitle = document.getElementById("plan-title");
+
+        // Clear the previous plans
+        plansList.innerHTML = '';
+
+        // Get the relevant plans for the selected category
+        const selectedPlans = plans[category] || [];
+
+        // If no plans are available, show a message
+        if (selectedPlans.length === 0) {
+            document.getElementById("no-plans-message").style.display = "block";
+        } else {
+            document.getElementById("no-plans-message").style.display = "none";
+
+            // Populate the plans dynamically
+            selectedPlans.forEach(plan => {
+                const planCard = document.createElement("div");
+                planCard.classList.add("col-md-4", "mb-3", "plan-card");
+                planCard.setAttribute("data-price", plan.price); // Add data-price for filtering
+
+                planCard.innerHTML = `
+                <div class="card bg-light border-0 shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <h5 class="card-title fw-bold mb-0">${plan.name}</h5>
+                        <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#planDetailsModal" onclick="showPlanDetails('${plan.name}', '${plan.description}', '${plan.price}')">View Details</a>
+                    </div>
+                    <p class="card-text text-muted">${plan.description}</p>
+                    <button class="btn btn-primary w-100">Buy</button>
+                </div>
+            `;
+                plansList.appendChild(planCard);
+            });
+        }
+
+        // Update the title based on selected category
+        const categoryTitles = {
+            recommended: "Recommended Plans",
+            unlimited: "Unlimited Plans",
+            popular: "Popular Plans",
+            basic: "Basic Plans",
+            topup: "Top-Up Plans"
+        };
+
+        planTitle.textContent = categoryTitles[category] || "Plans";
+        document.getElementById("toggle-bar").style.display = category === "recommended" ? "block" : "none";
+
+        // Apply filter after updating plans
+        applyFilters();
+    }
+
+    // Function to show plan details in modal
+    function showPlanDetails(name, description, price) {
+        document.getElementById("planName").textContent = name;
+        document.getElementById("planDescription").textContent = description;
+        document.getElementById("planValidity").textContent = `Validity: 28 Days`; // Modify dynamically if needed
+        document.getElementById("buyButton").textContent = `Buy for ₹${price}`;
+        document.getElementById("buyButton").onclick = function () {
+            window.location.href = './payment.html';
+        };
+
+        const modal = new bootstrap.Modal(document.getElementById("planDetailsModal"));
+        modal.show();
+    }
+
+    // Function to filter plans based on price and search term
+    function applyFilters() {
+        const maxPrice = parseInt(document.getElementById("price-range").value);
+        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+        const plans = document.querySelectorAll(".plan-card");
+        let plansVisible = false;
+
+        plans.forEach(plan => {
+            const planPrice = parseInt(plan.getAttribute("data-price"));
+            const planTitle = plan.querySelector(".card-title").textContent.toLowerCase();
+            const planDescription = plan.querySelector(".card-text").textContent.toLowerCase();
+
+            // Check if the plan satisfies both the max price and the search term
+            if (planPrice <= maxPrice && (planTitle.includes(searchTerm) || planDescription.includes(searchTerm))) {
+                plan.style.display = "";
+                plansVisible = true;
+            } else {
+                plan.style.display = "none";
+            }
+        });
+
+        // Show or hide the 'no plans available' message
+        document.getElementById("no-plans-message").style.display = plansVisible ? "none" : "block";
+    }
+
+    // Event listeners for filter changes
+    document.getElementById("price-range").addEventListener("input", function () {
+        document.getElementById("max-price").textContent = this.value; // Update max price display
+        applyFilters();
+    });
+
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
+
+    // Event listeners for category selection
+    document.getElementById("recommendedTab").addEventListener("click", () => displayPlans("recommended"));
+    document.getElementById("unlimitedTab").addEventListener("click", () => displayPlans("unlimited"));
+    document.getElementById("popularTab").addEventListener("click", () => displayPlans("popular"));
+    document.getElementById("basicTab").addEventListener("click", () => displayPlans("basic"));
+    document.getElementById("topupTab").addEventListener("click", () => displayPlans("topup"));
+
+    // Initialize with default category
+    displayPlans("recommended");
+    document.getElementById("support").addEventListener("click",()=>{
+        window.location.href = './support.html';
+    });
+
+
+</script>
+<script src="./js/plan-recharge.js"></script>
+<script src="./js/dashboard-home.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+
+</body>
+</html>

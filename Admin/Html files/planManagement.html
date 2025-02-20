@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .sidebar {
+      height: 100vh;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #e91e63;
+      padding-top: 20px;
+      color: white;
+    }
+
+    .sidebar a {
+      padding: 12px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: block;
+      transition: 0.3s;
+      border-radius: 5px;
+    }
+
+    .sidebar a:hover {
+      background-color: white;
+      color: #e91e63;
+    }
+
+    .content {
+      margin-left: 260px;
+      padding: 20px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      padding: 5px;
+      background: white;
+      border-bottom: 2px solid #ddd;
+      gap: 50px;
+    }
+
+    .form-control {
+      margin-left: 150px;
+    }
+
+    .table thead {
+      background: #e91e63;
+      color: white;
+    }
+
+    .view-btn {
+      background: #e91e63;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .add-plan-btn {
+      background: #e91e63;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 5px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h4 class="text-center">Admin Panel</h4>
+  <hr class="text-white"/>
+  <a href="#" id="dashboard"><i class="fas fa-home"></i> Dashboard</a>
+  <a href="#" id="user-management"><i class="fas fa-user-graduate"></i> User Management</a>
+  <a href="#" id="plan-management"><i class="fas fa-user-tie"></i> Plan Management</a>
+  <a href="#" id="transaction"><i class="fas fa-school"></i> Transaction</a>
+  <a href="#" id="support"><i class="fas fa-question-circle"></i> Support</a>
+  <a href="#" id="analysis"><i class="fas fa-cog"></i> Analysis</a>
+</div>
+
+<div class="content">
+  <div class="top-bar">
+    <h4>Plan Management</h4>
+    <button class="add-plan-btn" data-bs-toggle="modal" data-bs-target="#addPlanModal">Add New Plan</button>
+  </div>
+
+  <div class="mt-3">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Cost</th>
+        <th>Validity</th>
+        <th>Data per Day</th>
+        <th>Options</th>
+      </tr>
+      </thead>
+      <tbody id="plan-list">
+      <!-- Plan rows will be inserted here by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Plan Modal -->
+<div class="modal fade" id="addPlanModal" tabindex="-1" aria-labelledby="addPlanModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">
+          <i class="fas fa-plus-circle"></i> Add New Plan
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Success Alert (Hidden by Default) -->
+        <div id="success-alert" class="alert alert-success d-none" role="alert">
+          <i class="fas fa-check-circle"></i> Plan successfully added!
+        </div>
+
+        <form id="add-plan-form">
+          <div class="mb-2">
+            <label for="plan-name" class="form-label fw-bold">Plan Name</label>
+            <input type="text" class="form-control rounded shadow-sm" id="plan-name" placeholder="Enter plan name" required>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <label for="plan-cost" class="form-label fw-bold">Cost ($)</label>
+              <input type="number" class="form-control rounded shadow-sm" id="plan-cost" placeholder="Enter cost" required>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="plan-validity" class="form-label fw-bold">Validity (Days)</label>
+              <input type="number" class="form-control rounded shadow-sm" id="plan-validity" placeholder="Enter days" required>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label for="plan-data" class="form-label fw-bold">Data per Day (GB)</label>
+            <input type="number" step="0.1" class="form-control rounded shadow-sm" id="plan-data" placeholder="Enter data per day" required>
+          </div>
+
+          <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-danger fw-bold shadow">
+              <i class="fas fa-save"></i> Add Plan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const plans = []; // Store plans here (this could be replaced with a real database in production)
+
+  // Function to update the plan table
+  function updatePlanTable() {
+    const planList = document.getElementById("plan-list");
+    planList.innerHTML = ""; // Clear existing rows
+
+    plans.forEach((plan, index) => {
+      let row = `
+                <tr>
+                    <td>${plan.name}</td>
+                    <td>$${plan.cost}</td>
+                    <td>${plan.validity} days</td>
+                    <td>${plan.data} GB</td>
+                    <td>
+                        <button class="view-btn" onclick="editPlan(${index})">Edit</button>
+                        <button class="view-btn" onclick="deletePlan(${index})">Delete</button>
+                    </td>
+                </tr>
+            `;
+      planList.innerHTML += row;
+    });
+  }
+
+  // Function to add a new plan
+  document.getElementById("add-plan-form").addEventListener("submit", function(e) {
+    e.preventDefault(); // Prevent form from submitting
+
+    const name = document.getElementById("plan-name").value;
+    const cost = document.getElementById("plan-cost").value;
+    const validity = document.getElementById("plan-validity").value;
+    const data = document.getElementById("plan-data").value;
+
+    const newPlan = {
+      name: name,
+      cost: parseFloat(cost),
+      validity: parseInt(validity),
+      data: parseFloat(data)
+    };
+
+    plans.push(newPlan);
+    updatePlanTable();
+    // Close modal
+    $('#addPlanModal').modal('hide');
+  });
+
+  // Function to delete a plan
+  function deletePlan(index) {
+    plans.splice(index, 1);
+    updatePlanTable();
+  }
+
+  // Function to edit a plan
+  function editPlan(index) {
+    const plan = plans[index];
+
+    // Pre-fill the modal with the plan's details
+    document.getElementById("plan-name").value = plan.name;
+    document.getElementById("plan-cost").value = plan.cost;
+    document.getElementById("plan-validity").value = plan.validity;
+    document.getElementById("plan-data").value = plan.data;
+
+    // Change the form to update the plan
+    const form = document.getElementById("add-plan-form");
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      plan.name = document.getElementById("plan-name").value;
+      plan.cost = document.getElementById("plan-cost").value;
+      plan.validity = document.getElementById("plan-validity").value;
+      plan.data = document.getElementById("plan-data").value;
+
+      updatePlanTable();
+      $('#addPlanModal').modal('hide');
+    });
+  }
+  document.getElementById("user-management").addEventListener("click", function () {
+    window.location.href="./userManagement.html";
+  });
+  document.getElementById("plan-management").addEventListener("click", function () {
+    window.location.href="./planManagement.html";
+  });
+  document.getElementById("dashboard").addEventListener("click", function () {
+    window.location.href="./dashboard.html";
+  });
+  document.getElementById("transaction").addEventListener("click", function () {
+    window.location.href="./Transaction.html";
+  });
+  document.getElementById("analysis").addEventListener("click", function () {
+    window.location.href="./analysis.html";
+  });
+  document.getElementById("analysis").addEventListener("click", function () {
+    window.location.href="./analysis.html";
+  });
+
+  document.getElementById("add-plan-form").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent actual form submission
+
+    // Show success message
+    const successAlert = document.getElementById("success-alert");
+    successAlert.classList.remove("d-none");
+
+    // Clear form fields
+    document.getElementById("add-plan-form").reset();
+
+    // Hide the alert after 3 seconds
+    setTimeout(() => {
+      successAlert.classList.add("d-none");
+    }, 3000);
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

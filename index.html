@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paper2Pay Recharge</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+
+<header class="header">
+  <img src="./img/logo2.webp" alt="logo" class="logo">
+  <h1 class="site-title">RechargeFlow Recharge Service</h1>
+  <p class="header-welcome">Fast & Secure Recharge Anytime, Anywhere!</p>
+</header>
+
+<nav class="sticky-top navbar navbar-expand-md" aria-label="Third navbar example" id="main-nav">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03"
+            aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+    <div class="collapse navbar-collapse justify-content-center" id="navbarsExample03">
+      <ul class="nav-list">
+
+        <li class="nav-item">
+          <a href="#home" class="nav-link">
+            <i class="fas fa-home"></i> Home
+          </a>
+        </li>
+
+
+        <li class="nav-item" id="nav-item-prepaid">
+          <a class="nav-link dropdown-toggle show" href="#" data-bs-toggle="dropdown" aria-expanded="true">
+            Prepaid
+          </a>
+          <ul class="dropdown-menu" data-bs-popper="static" id="dropdown-menu">
+            <div class="dropdown-item-group">
+
+              <div class="row-items">
+                <a href="#">Mobile Recharge</a>
+                <a href="#">Recommended packs</a>
+                <a href="#">Data Plans</a>
+                <a href="#">Disney+ Hotstar Offer</a>
+                <a href="#">Only Calling Plan</a>
+              </div>
+            </div>
+          </ul>
+        </li>
+
+
+        <li class="nav-item">
+          <a href="./plans.html" class="nav-link">
+            <i class="fas fa-cogs"></i> Plans
+          </a>
+        </li>
+
+
+        <li class="nav-item">
+          <a href="./support.html" class="nav-link">
+            <i class="fas fa-headset"></i> Support
+          </a>
+        </li>
+
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                 class="bi bi-search" viewBox="0 0 16 16" color="white">
+              <path
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+            </svg>
+          </a>
+        </li>
+          <li class="nav-item dropdown" id="profile-dropdown">
+              <a href="#" class="nav-link" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                       class="bi bi-person-circle" viewBox="0 0 16 16" color="white" id="profile-icon">
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                      <path fill-rule="evenodd"
+                            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                  </svg>
+                  <span id="username-display"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" id="login-feature">
+                  <li><a class="dropdown-item" href="login.html">Login</a></li>
+                  <li><a class="dropdown-item" href="signup.html">Signup</a></li>
+              </ul>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" id="logout-feature" style="display: none;">
+                  <li><a class="dropdown-item" href="#" id="logout-link">Logout</a></li>
+              </ul>
+          </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Bootstrap Alert for Logout Message -->
+<div id="logout-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+    You are logging out...
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<section class="recommended">
+    <div class="recommended-cards">
+        <div id="recommended-img" class="gradient-box"></div>
+
+        <button class="carousel-control-next" type="button" onclick="changeImage()">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+
+        <button class="carousel-control-prev" type="button" onclick="backToImage()">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+    </div>
+</section>
+
+<section class="registration-container">
+  <div class="registration-form">
+    <h2 class="registration-title">Let's get connected,</h2>
+    <main class="d-flex">
+      <form class="form-signin">
+        <div class="form-floating mb-3">
+          <input type="tel" class="form-control" id="floatingInput" placeholder="Mobile Number" pattern="\d*" title="Only numbers are allowed">
+          <label for="floatingInput">Mobile Number</label>
+        </div>
+
+        <label for="operator-type">Select operator Type:</label>
+        <select name="operator-type" id="operator-type" class="form-select">
+          <option value="none" hidden>Choose</option>
+          <option value="jio">Jio</option>
+          <option value="airtel">Airtel</option>
+          <option value="vi">Vi</option>
+          <option value="bsnl">BSNL</option>
+        </select>
+
+        <div class="form-check text-start my-3">
+          <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+          <label class="form-check-label" for="flexCheckDefault">Remember me</label>
+        </div>
+
+        <button class="btn w-100 py-2" type="submit" id="recharge-btn">Recharge</button>
+      </form>
+    </main>
+  </div>
+
+  <div class="plans-container" id="plans-container">
+    <h3>Recommended Plans</h3>
+    <div class="plans-box">
+      <ul class="plans-list"></ul>
+    </div>
+  </div>
+
+</section>
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otpModalLabel">Enter OTP</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p>A 6-digit OTP has been sent to your mobile number.</p>
+                <div class="otp-container">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                </div>
+                <p class="mt-3"><span id="timer">01:00</span> before you can resend OTP.</p>
+                <button class="btn btn-link" id="resendOtp" disabled>Resend OTP</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitOtp">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-lg rounded">
+        <div class="card-body">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-sim-fill" viewBox="0 0 16 16">
+            <path d="M5 4.5a.5.5 0 0 1 .5-.5h2v2H5zM8.5 6V4h2a.5.5 0 0 1 .5.5V6zM5 7h6v2H5zm3.5 3H11v1.5a.5.5 0 0 1-.5.5h-2zm-1 0v2h-2a.5.5 0 0 1-.5-.5V10z"/>
+            <path d="M3.5 0A1.5 1.5 0 0 0 2 1.5v13A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5V3.414a1.5 1.5 0 0 0-.44-1.06L11.647.439A1.5 1.5 0 0 0 10.586 0zm2 3h5A1.5 1.5 0 0 1 12 4.5v7a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 11.5v-7A1.5 1.5 0 0 1 5.5 3"/>
+          </svg>
+          <h5 class="card-title">Get sim</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-lg rounded">
+        <div class="card-body">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-wifi" viewBox="0 0 16 16">
+            <path d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.44 12.44 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.52.52 0 0 0 .668.05A11.45 11.45 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049"/>
+            <path d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.46 9.46 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065m-2.183 2.183c.226-.226.185-.605-.1-.75A6.5 6.5 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.5 5.5 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091zM9.06 12.44c.196-.196.198-.52-.04-.66A2 2 0 0 0 8 11.5a2 2 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z"/>
+          </svg>
+          <h5 class="card-title">Get Fiber</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-lg rounded">
+        <div class="card-body">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-sim-fill" viewBox="0 0 16 16">
+            <path d="M5 4.5a.5.5 0 0 1 .5-.5h2v2H5zM8.5 6V4h2a.5.5 0 0 1 .5.5V6zM5 7h6v2H5zm3.5 3H11v1.5a.5.5 0 0 1-.5.5h-2zm-1 0v2h-2a.5.5 0 0 1-.5-.5V10z"/>
+            <path d="M3.5 0A1.5 1.5 0 0 0 2 1.5v13A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5V3.414a1.5 1.5 0 0 0-.44-1.06L11.647.439A1.5 1.5 0 0 0 10.586 0zm2 3h5A1.5 1.5 0 0 1 12 4.5v7a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 11.5v-7A1.5 1.5 0 0 1 5.5 3"/>
+          </svg>
+          <h5 class="card-title">Get sim</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="testimonials">
+    <div class="container mt-5">
+        <div class="testimonial-container">
+            <h3>Our Customer Says,</h3>
+            <div class="testimonial-slider">
+                <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
+                <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="testimonial-card">
+                                        <p>"Super easy to recharge! The process was smooth, and I got my plan activated instantly. Highly recommend!"</p>
+                                        <span>- Fazil Roshan</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="testimonial-card">
+                                        <p>"Excellent customer support! They resolved my issue within minutes. Thank you!"</p>
+                                        <span>- Dilip</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="testimonial-card">
+                                        <p>"Best recharge service with amazing offers. I will definitely use it again!"</p>
+                                        <span>- Kalai</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="testimonial-card">
+                                        <p>"Fast and secure payment process. I’m really impressed with the service quality."</p>
+                                        <span>- Simran Kaur</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="testimonial-card">
+                                        <p>"Affordable and reliable recharge options. It made my life easier!"</p>
+                                        <span>- Arjun Patel</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="testimonial-card">
+                                        <p>"This is my go-to platform for recharges. The UI is very user-friendly!"</p>
+                                        <span>- Neha Gupta</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn next" id="nextBtn">&#10095;</button>
+            </div>
+        </div>
+    </div>
+</section>
+<br/>
+<br/>
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>Our Offerings</h4>
+      <ul>
+        <li><a href="#">Mobile</a></li>
+        <li><a href="#">Fiber</a></li>
+        <li><a href="#">Business</a></li>
+        <li><a href="#">Apps</a></li>
+        <li><a href="#">Devices</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Explore Support</a></li>
+        <li><a href="#">Locate us</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Contact us</a></li>
+        <li><a href="#">Do not disturb</a></li>
+        <li><a href="#">Protect Yourself</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Our Company</h4>
+      <ul>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Siva Industries</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Investor relations</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Useful Links</h4>
+      <ul>
+        <li><a href="#">Get preferred SIM</a></li>
+        <li><a href="#">Choice number</a></li>
+        <li><a href="#">Recharge</a></li>
+        <li><a href="#">Pay Bills</a></li>
+        <li><a href="#">Login</a></li>
+        <li><a href="#">Sitemap</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>My Customer Associates</h4>
+      <ul>
+        <li><a href="#">Connect with Us</a></li>
+        <li><a href="#">Download RechargeFlow</a></li>
+        <li><a href="#">play-store</a></li>
+        <li><a href="#">app-store</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>“RechargeFlow” trademark is owned by Siva Industries Limited and licensed to its affiliates and subsidiaries. All rights to this website, including copyright in content represented thereat, vest in Siva Industries Limited and/or its respective affiliates and subsidiaries. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Press release</a>
+      <a href="#">Regulatory</a>
+      <a href="#">Policies</a>
+      <a href="#">Terms & conditions</a>
+    </div>
+  </div>
+</footer>
+
+<script src="./js/dashboard-home.js"></script>
+<!--<script src="./js/database.js"></script>-->
+<script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

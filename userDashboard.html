@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #EDF4C2 !important;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #4CAF50;
+            padding-top: 20px;
+            color: white;
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar a {
+            padding: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background-color: white;
+            color: #4CAF50;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            display: none;
+        }
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        .account-detail {
+            width: 45%;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+        }
+        .account-detail p {
+            margin: 0;
+        }
+        .account-detail .h4 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card {
+            margin-top: 10px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-bottom: 2px solid #ddd;
+        }
+        .table thead {
+            background: #4CAF50;
+            color: white;
+        }
+        .view-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            border: none;
+        }
+        .status-toggle {
+            display: flex;
+            align-items: center;
+        }
+        .status-toggle input {
+            margin-right: 10px;
+        }
+        .edit-btn {
+            font-size: 20px;
+            color: #4CAF50;
+            cursor: pointer;
+        }
+        .edit-btn:hover {
+            color: #2c8c29;
+        }
+        .date-range-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .date-range-card h5 {
+            margin-bottom: 15px;
+        }
+        .date-range-card .form-group {
+            margin-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: absolute;
+                z-index: 1000;
+            }
+            .content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                font-size: 24px;
+                cursor: pointer;
+                margin: 10px;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .close-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+<body>
+<div class="sidebar" id="sidebar">
+    <span class="close-btn" id="close-btn">&times;</span>
+    <h4 class="text-center">Customer Panel</h4>
+    <hr class="text-white"/>
+    <a href="#" id="dashboard-link">Dashboard</a>
+    <a href="#">User Information</a>
+    <a href="#" id="recharge-history-link">Recharge History</a>
+    <a href="#" id="autopay-management-link">AutoPay Management</a>
+    <a href="#" id="saved-payment-link">Saved Payment Methods</a>
+    <a href="#">Logout</a>
+</div>
+
+<div class="content">
+    <div class="top-bar">
+        <i class="fas fa-bars menu-toggle" id="menu-toggle"></i>
+        <h4>Customer Dashboard</h4>
+        <a href="./index.html" id="backtohome">Back to Home</a>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5>User Information</h5>
+                    <i class="fas fa-edit edit-btn" data-bs-toggle="modal" data-bs-target="#editModal"></i>
+                </div>
+                <p><strong>Name:</strong> <span id="user-name">Siva</span></p>
+                <p><strong>Email:</strong> <span id="user-email">Siva@gmail.com</span></p>
+                <p><strong>Mobile:</strong> <span id="user-mobile">+1234567890</span></p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Account Details</h5>
+                <div class="d-flex justify-content-between">
+                    <div class="account-detail border p-3">
+                        <p><strong>Balance:</strong></p>
+                        <p id="balance" class="h4">300₹</p>
+                    </div>
+                    <div class="account-detail border p-3">
+                        <p><strong>Current Plan:</strong></p>
+                        <p id="current-plan" class="h4">Basic Plan</p>
+                        <small>Expiry-date:12/12/2025</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Recharge History</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Download</th>
+                        </tr>
+                        </thead>
+                        <tbody id="history-list">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Usage Statistics</h5>
+                <canvas id="usageChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="usage-bar">
+            <div class="used"></div>
+            <div class="remaining"></div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <button class="logout-btn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recharge History View -->
+    <div id="recharge-history-view" style="display: none;">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Filter Recharge History</h5>
+                <div class="date-range-card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="start-date">Start Date</label>
+                                <input type="date" class="form-control" id="start-date">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="end-date">End Date</label>
+                                <input type="date" class="form-control" id="end-date">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="view-all-btn" class="btn btn-primary mt-3">View All</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Recharge History</h5>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Date</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Download</th>
+                    </tr>
+                    </thead>
+                    <tbody id="history-lists">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="autopay-management-view" style="display: none;">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>AutoPay Management</h5>
+                <div class="status-toggle">
+                    <input type="checkbox" id="autopay-toggle">
+                    <label for="autopay-toggle">Enable AutoPay (Monthly Recharge)</label>
+                </div>
+                <div id="autopay-card-form" style="display: none;">
+                    <h5 class="mt-4">Add a New Card</h5>
+                    <form id="add-card-form-autopay">
+                        <div class="mb-3">
+                            <label for="autopay-card-number" class="form-label">Card Number</label>
+                            <input type="text" class="form-control" id="autopay-card-number" placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="autopay-card-holder" class="form-label">Card Holder Name</label>
+                            <input type="text" class="form-control" id="autopay-card-holder" placeholder="John Doe" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="autopay-expiry-date" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="autopay-expiry-date" placeholder="MM/YY" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="autopay-cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="autopay-cvv" placeholder="123" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Card</button>
+                    </form>
+                </div>
+                <div id="selected-card-display" class="mt-4" style="display: none;">
+                    <h5>Selected Card for AutoPay</h5>
+                    <p id="selected-card-info"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Payment Methods View -->
+    <div id="saved-payment-view" style="display: none;">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Saved Payment Methods</h5>
+                <ul id="saved-cards-list">
+                    <!-- Cards will be dynamically added here -->
+                </ul>
+                <button class="btn btn-primary" id="add-new-card-btn" data-bs-toggle="modal" data-bs-target="#addCardModal">Add New Card</button>
+            </div>
+        </div>
+    </div>
+
+<!-- Add Card Modal -->
+<div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCardModalLabel">Add New Card</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-card-form-modal">
+                    <div class="mb-3">
+                        <label for="modal-card-number" class="form-label">Card Number</label>
+                        <input type="text" class="form-control" id="modal-card-number" placeholder="1234 5678 9012 3456" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-card-holder" class="form-label">Card Holder Name</label>
+                        <input type="text" class="form-control" id="modal-card-holder" placeholder="John Doe" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="modal-expiry-date" class="form-label">Expiry Date</label>
+                            <input type="text" class="form-control" id="modal-expiry-date" placeholder="MM/YY" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="modal-cvv" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="modal-cvv" placeholder="123" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Card</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Select Card for AutoPay Modal -->
+<div class="modal fade" id="selectCardModal" tabindex="-1" aria-labelledby="selectCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="selectCardModalLabel">Select Card for AutoPay</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="select-card-form">
+                    <div class="mb-3">
+                        <label for="selected-card" class="form-label">Choose a Card</label>
+                        <select class="form-select" id="selected-card" required>
+                            <!-- Cards will be dynamically added here -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enable AutoPay</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="success-message"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit User Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-form">
+                    <div class="mb-3">
+                        <label for="edit-name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="edit-name" value="Siva">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="edit-email" value="Siva@gmail.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-mobile" class="form-label">Mobile</label>
+                        <input type="text" class="form-control" id="edit-mobile" value="+1234567890">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-changes">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    const rechargeHistory = [
+        { id: "TXN123", date: "2025-02-15", plan: "Basic Plan", amount: "$10", status: "Success" },
+        { id: "TXN124", date: "2025-02-14", plan: "Premium Plan", amount: "$20", status: "Success" }
+    ];
+
+    function populateRechargeHistory(data = rechargeHistory, targetId = "history-list") {
+        const historyList = document.getElementById(targetId);
+        historyList.innerHTML = "";
+
+        data.forEach(history => {
+            let row = `
+                <tr>
+                    <td>${history.id}</td>
+                    <td>${history.date}</td>
+                    <td>${history.plan}</td>
+                    <td>${history.amount}</td>
+                    <td>${history.status}</td>
+                    <td><i class="fas fa-download download-icon" style="cursor: pointer;" data-id="${history.id}"></i></td>
+                </tr>
+            `;
+            historyList.innerHTML += row;
+        });
+
+        // Add event listeners for download icons
+        document.querySelectorAll(".download-icon").forEach(icon => {
+            icon.addEventListener("click", function () {
+                const transactionId = this.getAttribute("data-id");
+                const transaction = rechargeHistory.find(item => item.id === transactionId);
+                if (transaction) {
+                    const doc = new jsPDF();
+                    doc.text(`Transaction ID: ${transaction.id}`, 10, 10);
+                    doc.text(`Date: ${transaction.date}`, 10, 20);
+                    doc.text(`Plan: ${transaction.plan}`, 10, 30);
+                    doc.text(`Amount: ${transaction.amount}`, 10, 40);
+                    doc.text(`Status: ${transaction.status}`, 10, 50);
+                    doc.save(`Transaction_${transaction.id}.pdf`);
+                }
+            });
+        });
+    }
+
+    populateRechargeHistory();
+
+    document.querySelector(".logout-btn").addEventListener("click", function() {
+        alert("You have logged out.");
+    });
+
+    document.getElementById("save-changes").addEventListener("click", function() {
+        const name = document.getElementById("edit-name").value;
+        const email = document.getElementById("edit-email").value;
+        const mobile = document.getElementById("edit-mobile").value;
+
+        document.getElementById("user-name").textContent = name;
+        document.getElementById("user-email").textContent = email;
+        document.getElementById("user-mobile").textContent = mobile;
+
+        var modal = new bootstrap.Modal(document.getElementById('editModal'));
+        modal.hide();
+    });
+
+    document.getElementById("menu-toggle").addEventListener("click", function() {
+        document.getElementById("sidebar").classList.toggle("active");
+    });
+
+    document.getElementById("close-btn").addEventListener("click", function() {
+        document.getElementById("sidebar").classList.remove("active");
+    });
+
+    // Chart.js for Usage Statistics
+    const ctx = document.getElementById('usageChart').getContext('2d');
+    const usageChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'Usage (GB)',
+                data: [12, 19, 3, 5, 2, 3, 7],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    // Example Data
+    const totalLimit = 20;  // Total data limit
+    const usedData = 12;    // Data already used
+    const dataLeft = totalLimit - usedData;
+    const usagePercentage = (usedData / totalLimit) * 100;
+    const remainingPercentage = 100 - usagePercentage;
+
+    // Apply Dynamic Widths
+    document.querySelector('.used').style.width = usagePercentage + '%';
+    document.querySelector('.remaining').style.width = remainingPercentage + '%';
+
+
+    // Filter Recharge History by Date
+    function filterHistoryByDate(startDate, endDate) {
+        const filteredHistory = rechargeHistory.filter(historyItem => {
+            const historyDate = new Date(historyItem.date);
+            return (!startDate || historyDate >= new Date(startDate)) && (!endDate || historyDate <= new Date(endDate));
+        });
+        populateRechargeHistory(filteredHistory, "history-lists");
+    }
+
+    document.getElementById("view-all-btn").addEventListener("click", function() {
+        const startDate = document.getElementById("start-date").value;
+        const endDate = document.getElementById("end-date").value;
+        filterHistoryByDate(startDate, endDate);
+    });
+
+    document.getElementById("recharge-history-link").addEventListener("click", function() {
+        document.getElementById("dashboard-view").style.display = "none";
+        document.getElementById("recharge-history-view").style.display = "block";
+        populateRechargeHistory(rechargeHistory, "history-lists");
+    });
+
+    document.getElementById("dashboard-link").addEventListener("click", function() {
+        document.getElementById("dashboard-view").style.display = "block";
+        document.getElementById("recharge-history-view").style.display = "none";
+    });
+
+    const savedPaymentMethods = [];
+    let selectedCardForAutoPay = null;
+
+    // Toggle AutoPay Form
+    function toggleAutoPayForm() {
+        const autopayToggle = document.getElementById("autopay-toggle");
+        const autopayCardForm = document.getElementById("autopay-card-form");
+
+        if (autopayToggle.checked && savedPaymentMethods.length === 0) {
+            autopayCardForm.style.display = "block";
+        } else {
+            autopayCardForm.style.display = "none";
+        }
+    }
+
+    // Handle AutoPay Toggle
+    document.getElementById("autopay-toggle").addEventListener("change", function() {
+        if (this.checked) {
+            if (savedPaymentMethods.length === 0) {
+                toggleAutoPayForm();
+            } else if (savedPaymentMethods.length > 1) {
+                // Show modal to select a card
+                const selectCardModal = new bootstrap.Modal(document.getElementById('selectCardModal'));
+                const selectCardForm = document.getElementById("selected-card");
+                selectCardForm.innerHTML = "";
+
+                savedPaymentMethods.forEach((card, index) => {
+                    const option = document.createElement("option");
+                    option.value = index;
+                    option.textContent = `Card ${index + 1}: **** **** **** ${card.number.slice(-4)}`;
+                    selectCardForm.appendChild(option);
+                });
+
+                selectCardModal.show();
+            } else {
+                selectedCardForAutoPay = savedPaymentMethods[0];
+                showSuccessModal(`AutoPay Enabled with Card: **** **** **** ${selectedCardForAutoPay.number.slice(-4)}`);
+                updateSelectedCardDisplay();
+            }
+        } else {
+            selectedCardForAutoPay = null;
+            showSuccessModal("AutoPay Disabled");
+            updateSelectedCardDisplay();
+        }
+    });
+
+    // Handle Card Selection for AutoPay
+    document.getElementById("select-card-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const selectedCardIndex = document.getElementById("selected-card").value;
+        selectedCardForAutoPay = savedPaymentMethods[selectedCardIndex];
+        showSuccessModal(`AutoPay Enabled with Card: **** **** **** ${selectedCardForAutoPay.number.slice(-4)}`);
+        updateSelectedCardDisplay();
+        bootstrap.Modal.getInstance(document.getElementById('selectCardModal')).hide();
+    });
+
+    // Update Selected Card Display
+    function updateSelectedCardDisplay() {
+        const selectedCardDisplay = document.getElementById("selected-card-display");
+        const selectedCardInfo = document.getElementById("selected-card-info");
+
+        if (selectedCardForAutoPay) {
+            selectedCardInfo.textContent = `**** **** **** ${selectedCardForAutoPay.number.slice(-4)}`;
+            selectedCardDisplay.style.display = "block";
+        } else {
+            selectedCardDisplay.style.display = "none";
+        }
+    }
+
+    // Add New Card (from Saved Payment Methods or AutoPay Management)
+    document.getElementById("add-card-form-modal").addEventListener("submit", function(event) {
+        event.preventDefault();
+        addCard(
+            document.getElementById("modal-card-number").value,
+            document.getElementById("modal-card-holder").value,
+            document.getElementById("modal-expiry-date").value,
+            document.getElementById("modal-cvv").value
+        );
+        bootstrap.Modal.getInstance(document.getElementById('addCardModal')).hide();
+    });
+
+    document.getElementById("add-card-form-autopay").addEventListener("submit", function(event) {
+        event.preventDefault();
+        addCard(
+            document.getElementById("autopay-card-number").value,
+            document.getElementById("autopay-card-holder").value,
+            document.getElementById("autopay-expiry-date").value,
+            document.getElementById("autopay-cvv").value
+        );
+    });
+
+    function addCard(number, holder, expiry, cvv) {
+        const newCard = { number, holder, expiry, cvv };
+        savedPaymentMethods.push(newCard);
+        updateSavedPaymentMethods();
+        toggleAutoPayForm();
+        showSuccessModal("Card added successfully!");
+    }
+
+    // Update Saved Payment Methods List
+    function updateSavedPaymentMethods() {
+        const savedCardsList = document.getElementById("saved-cards-list");
+        savedCardsList.innerHTML = "";
+
+        savedPaymentMethods.forEach((card, index) => {
+            const li = document.createElement("li");
+            li.textContent = `Card ${index + 1}: **** **** **** ${card.number.slice(-4)}`;
+            savedCardsList.appendChild(li);
+        });
+    }
+
+    // Show Success Modal
+    function showSuccessModal(message) {
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        document.getElementById("success-message").textContent = message;
+        successModal.show();
+    }
+
+    // Navigation
+    document.getElementById("autopay-management-link").addEventListener("click", function() {
+        document.getElementById("dashboard-view").style.display = "none";
+        document.getElementById("recharge-history-view").style.display = "none";
+        document.getElementById("saved-payment-view").style.display = "none";
+        document.getElementById("autopay-management-view").style.display = "block";
+        toggleAutoPayForm();
+    });
+
+    document.getElementById("saved-payment-link").addEventListener("click", function() {
+        document.getElementById("dashboard-view").style.display = "none";
+        document.getElementById("recharge-history-view").style.display = "none";
+        document.getElementById("autopay-management-view").style.display = "none";
+        document.getElementById("saved-payment-view").style.display = "block";
+        updateSavedPaymentMethods();
+    });
+
+    document.getElementById("dashboard-link").addEventListener("click", function() {
+        document.getElementById("dashboard-view").style.display = "block";
+        document.getElementById("recharge-history-view").style.display = "none";
+        document.getElementById("autopay-management-view").style.display = "none";
+        document.getElementById("saved-payment-view").style.display = "none";
+    });
+
+    document.getElementById("recharge-history-link").addEventListener("click", function() {
+        document.getElementById("dashboard-view").style.display = "none";
+        document.getElementById("recharge-history-view").style.display = "block";
+        document.getElementById("autopay-management-view").style.display = "none";
+        document.getElementById("saved-payment-view").style.display = "none";
+    });
+
+</script>
+<script src="./js/database.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
