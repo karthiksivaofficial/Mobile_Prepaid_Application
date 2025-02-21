@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Paper2Pay Recharge</title>
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
 
 <header class="header">
-  <img src="./img/logo2.webp" alt="logo" class="logo">
+  <img src="img/logo2.webp" alt="logo" class="logo">
   <h1 class="site-title">RechargeFlow Recharge Service</h1>
   <p class="header-welcome">Fast & Secure Recharge Anytime, Anywhere!</p>
 </header>
@@ -54,14 +54,14 @@
 
 
         <li class="nav-item">
-          <a href="./plans.html" class="nav-link">
+          <a href="plans.html" class="nav-link">
             <i class="fas fa-cogs"></i> Plans
           </a>
         </li>
 
 
         <li class="nav-item">
-          <a href="./support.html" class="nav-link">
+          <a href="support.html" class="nav-link">
             <i class="fas fa-headset"></i> Support
           </a>
         </li>
@@ -105,6 +105,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
+
 <section class="recommended">
     <div class="recommended-cards">
         <div id="recommended-img" class="gradient-box"></div>
@@ -127,7 +128,7 @@
     <main class="d-flex">
       <form class="form-signin">
         <div class="form-floating mb-3">
-          <input type="tel" class="form-control" id="floatingInput" placeholder="Mobile Number" pattern="\d*" title="Only numbers are allowed">
+          <input type="tel" class="form-control" id="floatingInput" placeholder="Mobile Number" pattern="[0-9]{10}" required>
           <label for="floatingInput">Mobile Number</label>
         </div>
 
@@ -149,8 +150,13 @@
       </form>
     </main>
   </div>
+    <div class="alert alert-danger alert-dismissible d-none" id="mobileAlert" role="alert">
+        <strong>Invalid Mobile Number!</strong> Please enter a valid 10-digit mobile number.
+        <button type="button" class="btn-close" id="cancelAlert" aria-label="Close"></button>
+    </div>
 
-  <div class="plans-container" id="plans-container">
+
+    <div class="plans-container" id="plans-container">
     <h3>Recommended Plans</h3>
     <div class="plans-box">
       <ul class="plans-list"></ul>

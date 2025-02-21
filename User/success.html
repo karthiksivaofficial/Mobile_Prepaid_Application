@@ -67,10 +67,10 @@
   <p class="details">Your recharge of <strong id="success-amount">₹3599</strong> has been successfully processed for the mobile number <span id="success-number"></span>.</p>
   <button class="btn btn-home" onclick="goHome()">Back to Home</button>
 </div>
-<script src="./js/plan-recharge.js"></script>
+<script src="js/plan-recharge.js"></script>
 <script>
   function goHome() {
-    window.location.href = "index.html"; // Change this to your home page
+    window.location.href = "index.html";
   }
   document.addEventListener("DOMContentLoaded", () => {
     const selectedPlan = JSON.parse(localStorage.getItem("selectedPlan"));

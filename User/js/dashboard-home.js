@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Check if the user is logged in
     let loggedIn = localStorage.getItem("loggedIn") === "true";
     let name = localStorage.getItem("userName");
 
@@ -29,21 +28,37 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Handle logout
+
 document.getElementById('logout-link').addEventListener("click", function (e) {
-    e.preventDefault();
+    // e.preventDefault();
+    //
+    // // Show logout alert
+    // document.getElementById('logout-alert').style.display = "block";
+    //
+    // // Delay the logout action to allow the user to see the alert
+    // setTimeout(() => {
+    //     localStorage.removeItem("loggedIn");
+    //     localStorage.removeItem("userName");
+    //     localStorage.removeItem("userPhone");
+    //
+    //     // Redirect to the home page
+    //     window.location.href = "./index.html";
+    // }, 2000); // 2 seconds delay
+    logout();
+});
 
-    // Show logout alert
-    document.getElementById('logout-alert').style.display = "block";
+function logout() {
+    const loadingOverlay = document.createElement("div");
+    loadingOverlay.classList.add("position-fixed", "top-0", "start-0", "w-100", "h-100", "bg-dark", "bg-opacity-50", "d-flex", "justify-content-center", "align-items-center", "text-white", "fs-4");
+    loadingOverlay.innerHTML = "Logging out...";
+    document.body.appendChild(loadingOverlay);
 
-    // Delay the logout action to allow the user to see the alert
-    setTimeout(() => {
+    setTimeout(function() {
         localStorage.removeItem("loggedIn");
         localStorage.removeItem("userName");
         localStorage.removeItem("userPhone");
+        localStorage.removeItem("floatingInput");
+        window.location.href = "index.html";
+    },2000);
 
-        // Redirect to the home page
-        window.location.href = "./index.html";
-    }, 2000); // 2 seconds delay
-});
-
+}

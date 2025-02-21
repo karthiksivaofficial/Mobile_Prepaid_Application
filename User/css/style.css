@@ -52,8 +52,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px 10px; /* Reduce padding to shrink height */
-  min-height: 45px; /* Set a smaller min-height */
+  padding: 5px 10px;
+  min-height: 45px;
 }
 
 /* Center navbar items */
@@ -66,9 +66,9 @@ body {
 .nav-list {
   list-style: none;
   display: flex;
-  align-items: center; /* Ensure all items align properly */
+  align-items: center;
   justify-content: center;
-  gap: 12px; /* Reduce spacing between items */
+  gap: 12px;
   padding: 0;
   margin: 0;
 }
@@ -76,12 +76,12 @@ body {
 .nav-item {
   color: white;
   text-decoration: none;
-  font-size: 16px; /* Maintain readability */
-  padding: 5px 10px; /* Reduce padding for smaller height */
+  font-size: 16px;
+  padding: 5px 10px;
   transition: 0.3s;
   position: relative;
   display: flex;
-  align-items: center; /* Ensure text and icons align perfectly */
+  align-items: center;
 }
 
 .nav-item:hover {
@@ -102,7 +102,7 @@ body {
   background: white;
   border-radius: 5px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: 200px; /* Slightly reduced width */
+  width: 200px;
   padding: 10px;
   z-index: 1000;
 }
@@ -113,7 +113,7 @@ body {
 }
 
 .dropdown-item-group {
-  display: grid; /* Reduce spacing for compact layout */
+  display: grid;
 }
 
 .row-items {
@@ -122,7 +122,7 @@ body {
 }
 
 .row-items a {
-  padding: 6px 8px; /* Reduce padding for a smaller dropdown */
+  padding: 6px 8px;
   font-size: 14px;
   text-decoration: none;
   color: black;
@@ -136,29 +136,29 @@ body {
   transform: translateX(3px);
 }
 .navbar-toggler {
-  background: none !important; /* Remove background */
-  border: none !important; /* Remove border */
-  padding: 0; /* Remove extra padding */
-  outline: none !important; /* Remove focus outline */
-  box-shadow: none !important; /* Remove any shadows */
-  width: auto; /* Ensure it only takes up the icon space */
+  background: none !important;
+  border: none !important;
+  padding: 0;
+  outline: none !important;
+  box-shadow: none !important;
+  width: auto;
   height: auto;
 }
 
 .navbar-toggler-icon {
-  width: 22px; /* Adjust icon size */
+  width: 22px;
   height: 22px;
 }
 #logout-alert {
-  display: none; /* Initially hidden */
+  display: none;
   position: fixed;
-  top: 20%; /* Center vertically */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust for exact center */
-  z-index: 1050; /* Ensure it appears above other content, including the navbar */
-  width: auto; /* Adjust width as needed */
-  max-width: 90%; /* Prevent it from being too wide */
-  text-align: center; /* Center the text inside the alert */
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1050;
+  width: auto;
+  max-width: 90%;
+  text-align: center;
 }
 
 /* Recharge Section */
@@ -296,7 +296,7 @@ body {
 }
 
 .plans-box {
-  background: #f0f0f0; /* Light grey background */
+  background: #f0f0f0;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -338,7 +338,6 @@ body {
   border-radius: 10px;
 }
 
-/* Ensuring All Testimonials Have Equal Height */
 .testimonial-container {
   background-color: #ddd;
   padding: 40px 20px;
@@ -347,14 +346,14 @@ body {
   position: relative;
 }
 
-/* Ensuring All Testimonials Have Equal Height */
+
 .testimonial-card {
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 10px 0;
-  min-height: 150px; /* Fixed Height */
+  min-height: 150px;
   display: flex;
   flex-direction: column;
   justify-content: center;

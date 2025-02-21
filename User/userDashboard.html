@@ -81,13 +81,6 @@
             background: #4CAF50;
             color: white;
         }
-        .view-btn {
-            background: #4CAF50;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: none;
-        }
         .logout-btn {
             background: #f44336;
             color: white;
@@ -148,7 +141,6 @@
     </style>
 </head>
 <body>
-<body>
 <div class="sidebar" id="sidebar">
     <span class="close-btn" id="close-btn">&times;</span>
     <h4 class="text-center">Customer Panel</h4>
@@ -165,7 +157,7 @@
     <div class="top-bar">
         <i class="fas fa-bars menu-toggle" id="menu-toggle"></i>
         <h4>Customer Dashboard</h4>
-        <a href="./index.html" id="backtohome">Back to Home</a>
+        <a href="index.html" id="backtohome">Back to Home</a>
     </div>
 
     <!-- Dashboard View -->
@@ -510,7 +502,7 @@
         document.getElementById("sidebar").classList.remove("active");
     });
 
-    // Chart.js for Usage Statistics
+
     const ctx = document.getElementById('usageChart').getContext('2d');
     const usageChart = new Chart(ctx, {
         type: 'line',
@@ -532,14 +524,12 @@
             }
         }
     });
-    // Example Data
-    const totalLimit = 20;  // Total data limit
-    const usedData = 12;    // Data already used
+    const totalLimit = 20;
+    const usedData = 12;
     const dataLeft = totalLimit - usedData;
     const usagePercentage = (usedData / totalLimit) * 100;
     const remainingPercentage = 100 - usagePercentage;
 
-    // Apply Dynamic Widths
     document.querySelector('.used').style.width = usagePercentage + '%';
     document.querySelector('.remaining').style.width = remainingPercentage + '%';
 

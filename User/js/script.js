@@ -71,19 +71,48 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+  let loggedIn=localStorage.getItem("loggedIn");
+  if(!loggedIn){
+    localStorage.removeItem("floatingInput");
+  }
   let rechargeBtn = document.getElementById("recharge-btn");
   let otpModal = new bootstrap.Modal(document.getElementById("otpModal"));
   let otpInputs = document.querySelectorAll(".otp-input");
   let resendOtpBtn = document.getElementById("resendOtp");
   let timerDisplay = document.getElementById("timer");
-
+  let home_mobile = document.getElementById("floatingInput");
+  let mobileAlert = document.getElementById("mobileAlert");
   let timer;
 
   rechargeBtn.addEventListener("click", function (event) {
     event.preventDefault();
+
+
+    let mobileNumber = home_mobile.value.trim();
+    let mobilePattern = /^[0-9]{10}$/;
+    if (!mobilePattern.test(mobileNumber)) {
+
+      mobileAlert.classList.remove("d-none");
+      mobileAlert.classList.add("show");
+      home_mobile.focus();
+      return;
+    } else {
+
+      localStorage.setItem("floatingInput",home_mobile.value);
+      mobileAlert.classList.add("d-none");
+      mobileAlert.classList.remove("show");
+    }
+
+
     otpModal.show();
     startTimer();
     clearOtpFields();
+  });
+
+
+  cancelAlert.addEventListener("click", function () {
+    mobileAlert.classList.add("d-none");
+    mobileAlert.classList.remove("show");
   });
 
   otpInputs.forEach((input, index) => {

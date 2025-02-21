@@ -11,7 +11,7 @@
 <body>
 
 <header class="header">
-    <img src="./img/logo2.webp" alt="logo" class="logo">
+    <img src="img/logo2.webp" alt="logo" class="logo">
     <h1 class="site-title">RechargeFlow Recharge Service</h1>
     <p class="header-welcome">Fast & Secure Recharge Anytime, Anywhere!</p>
 </header>
@@ -51,7 +51,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="./support.html" class="nav-link" id="support">
+                    <a href="support.html" class="nav-link" id="support">
                         <i class="fas fa-headset"></i> Support
                     </a>
                 </li>
@@ -216,6 +216,7 @@
     </div>
 </div>
 
+
 <script>
     const plansData = [
         {
@@ -303,40 +304,40 @@
         filterContainer.style.display = currentDisplay === 'none' ? 'block' : 'none';
     });
 
-    // Event listener for price range change
+
     document.getElementById('price-range').addEventListener('input', function() {
         const maxPrice = this.value;
-        document.getElementById('max-price').textContent = maxPrice; // Update the display for max price
+        document.getElementById('max-price').textContent = maxPrice;
         filterPlans(maxPrice, document.getElementById('searchInput').value);
     });
 
-    // Event listener for search input change
+
     document.getElementById('searchInput').addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
         const maxPrice = document.getElementById('price-range').value;
         filterPlans(maxPrice, searchTerm);
     });
 
-    // Filter function that checks both price and search term
+
     function filterPlans(maxPrice, searchTerm) {
         const plans = document.querySelectorAll('.plan-card');
         let plansVisible = false;
 
         plans.forEach(plan => {
-            const planPrice = parseInt(plan.getAttribute('data-price')); // Get the plan price
+            const planPrice = parseInt(plan.getAttribute('data-price'));
             const planTitle = plan.querySelector('.card-title').textContent.toLowerCase();
             const planDescription = plan.querySelector('.card-text').textContent.toLowerCase();
 
-            // Check if the plan satisfies both the max price and the search term
+
             if (planPrice <= maxPrice && (planTitle.includes(searchTerm) || planDescription.includes(searchTerm))) {
-                plan.style.display = '';  // Show the plan
+                plan.style.display = '';
                 plansVisible = true;
             } else {
-                plan.style.display = 'none';  // Hide the plan
+                plan.style.display = 'none';
             }
         });
 
-        // Show or hide the 'no plans available' message
+
         const noPlansMessage = document.getElementById('no-plans-message');
         if (plansVisible) {
             noPlansMessage.style.display = 'none';
@@ -364,9 +365,9 @@
             ];
             document.getElementById('planName').textContent = `Plan: ₹${planPrice}`;
             document.getElementById('planDescription').textContent = planDescription;
-            document.getElementById('planValidity').textContent = `Validity: 28 Days`;  // You can modify this dynamically as well
+            document.getElementById('planValidity').textContent = `Validity: 28 Days`;
             const benefitsList = document.getElementById('planBenefits');
-            benefitsList.innerHTML = ""; // Clear previous benefits
+            benefitsList.innerHTML = "";
             benefits.forEach(benefit => {
                 const li = document.createElement('li');
                 li.textContent = benefit;
@@ -374,18 +375,11 @@
             });
             document.getElementById('buyButton').textContent = `Buy for ₹${planPrice}`;
             document.getElementById('buyButton').onclick = function() {
-                window.location.href = './payment.html';
+                window.location.href = 'payment.html';
             };
             const modal = new bootstrap.Modal(document.getElementById('planDetailsModal'));
             modal.show();
         });
-    });
-
-    // Use event delegation to listen for clicks on dynamically added buttons
-    document.body.addEventListener("click", function(event) {
-        if (event.target && event.target.matches(".btn-primary")) {
-            window.location.href = "Recharge.html";
-        }
     });
 
 
@@ -403,7 +397,7 @@
         });
     });
     document.getElementById("home").addEventListener("click", function() {
-        window.location.href = "./index.html";
+        window.location.href = "index.html";
     });
 
     const plans = {
@@ -431,28 +425,28 @@
             { name: "₹150", description: "14 Days | 1GB/Day", price: "150" },
         ]
     };
-    // Function to display plans dynamically
+
     function displayPlans(category) {
         const plansList = document.getElementById("plans-list");
         const planTitle = document.getElementById("plan-title");
 
-        // Clear the previous plans
+
         plansList.innerHTML = '';
 
-        // Get the relevant plans for the selected category
+
         const selectedPlans = plans[category] || [];
 
-        // If no plans are available, show a message
+
         if (selectedPlans.length === 0) {
             document.getElementById("no-plans-message").style.display = "block";
         } else {
             document.getElementById("no-plans-message").style.display = "none";
 
-            // Populate the plans dynamically
+
             selectedPlans.forEach(plan => {
                 const planCard = document.createElement("div");
                 planCard.classList.add("col-md-4", "mb-3", "plan-card");
-                planCard.setAttribute("data-price", plan.price); // Add data-price for filtering
+                planCard.setAttribute("data-price", plan.price);
 
                 planCard.innerHTML = `
                 <div class="card bg-light border-0 shadow-sm">
@@ -468,7 +462,7 @@
             });
         }
 
-        // Update the title based on selected category
+
         const categoryTitles = {
             recommended: "Recommended Plans",
             unlimited: "Unlimited Plans",
@@ -480,25 +474,25 @@
         planTitle.textContent = categoryTitles[category] || "Plans";
         document.getElementById("toggle-bar").style.display = category === "recommended" ? "block" : "none";
 
-        // Apply filter after updating plans
+
         applyFilters();
     }
 
-    // Function to show plan details in modal
+
     function showPlanDetails(name, description, price) {
         document.getElementById("planName").textContent = name;
         document.getElementById("planDescription").textContent = description;
         document.getElementById("planValidity").textContent = `Validity: 28 Days`; // Modify dynamically if needed
         document.getElementById("buyButton").textContent = `Buy for ₹${price}`;
         document.getElementById("buyButton").onclick = function () {
-            window.location.href = './payment.html';
+            window.location.href = 'payment.html';
         };
 
         const modal = new bootstrap.Modal(document.getElementById("planDetailsModal"));
         modal.show();
     }
 
-    // Function to filter plans based on price and search term
+
     function applyFilters() {
         const maxPrice = parseInt(document.getElementById("price-range").value);
         const searchTerm = document.getElementById("searchInput").value.toLowerCase();
@@ -510,7 +504,7 @@
             const planTitle = plan.querySelector(".card-title").textContent.toLowerCase();
             const planDescription = plan.querySelector(".card-text").textContent.toLowerCase();
 
-            // Check if the plan satisfies both the max price and the search term
+
             if (planPrice <= maxPrice && (planTitle.includes(searchTerm) || planDescription.includes(searchTerm))) {
                 plan.style.display = "";
                 plansVisible = true;
@@ -519,29 +513,27 @@
             }
         });
 
-        // Show or hide the 'no plans available' message
+
         document.getElementById("no-plans-message").style.display = plansVisible ? "none" : "block";
     }
 
-    // Event listeners for filter changes
+
     document.getElementById("price-range").addEventListener("input", function () {
-        document.getElementById("max-price").textContent = this.value; // Update max price display
+        document.getElementById("max-price").textContent = this.value;
         applyFilters();
     });
 
     document.getElementById("searchInput").addEventListener("input", applyFilters);
 
-    // Event listeners for category selection
     document.getElementById("recommendedTab").addEventListener("click", () => displayPlans("recommended"));
     document.getElementById("unlimitedTab").addEventListener("click", () => displayPlans("unlimited"));
     document.getElementById("popularTab").addEventListener("click", () => displayPlans("popular"));
     document.getElementById("basicTab").addEventListener("click", () => displayPlans("basic"));
     document.getElementById("topupTab").addEventListener("click", () => displayPlans("topup"));
 
-    // Initialize with default category
     displayPlans("recommended");
     document.getElementById("support").addEventListener("click",()=>{
-        window.location.href = './support.html';
+        window.location.href = 'support.html';
     });
 
 
