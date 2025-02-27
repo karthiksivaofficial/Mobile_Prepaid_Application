@@ -138,6 +138,18 @@
                 display: block;
             }
         }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .bg-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .download-icon:hover {
+            color: #2c3e50 !important;
+        }
     </style>
 </head>
 <body>
@@ -146,7 +158,6 @@
     <h4 class="text-center">Customer Panel</h4>
     <hr class="text-white"/>
     <a href="#" id="dashboard-link">Dashboard</a>
-    <a href="#">User Information</a>
     <a href="#" id="recharge-history-link">Recharge History</a>
     <a href="#" id="autopay-management-link">AutoPay Management</a>
     <a href="#" id="saved-payment-link">Saved Payment Methods</a>
@@ -171,6 +182,7 @@
                 <p><strong>Name:</strong> <span id="user-name">Siva</span></p>
                 <p><strong>Email:</strong> <span id="user-email">Siva@gmail.com</span></p>
                 <p><strong>Mobile:</strong> <span id="user-mobile">+1234567890</span></p>
+                <p><strong>Alternative Number:</strong> <span id="user-alt-mobile">+0987654321</span></p>
             </div>
         </div>
 
@@ -187,28 +199,6 @@
                         <p id="current-plan" class="h4">Basic Plan</p>
                         <small>Expiry-date:12/12/2025</small>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5>Recharge History</h5>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Transaction ID</th>
-                            <th>Date</th>
-                            <th>Plan</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Download</th>
-                        </tr>
-                        </thead>
-                        <tbody id="history-list">
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -401,98 +391,178 @@
     </div>
 </div>
 <!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit User Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="edit-form">
-                    <div class="mb-3">
-                        <label for="edit-name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="edit-name" value="Siva">
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit-email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="edit-email" value="Siva@gmail.com">
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit-mobile" class="form-label">Mobile</label>
-                        <input type="text" class="form-control" id="edit-mobile" value="+1234567890">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="save-changes">Save Changes</button>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit User Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="edit-name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="edit-name" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="edit-email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-mobile" class="form-label">Mobile</label>
+                            <input type="text" class="form-control" id="edit-mobile" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-alt-mobile" class="form-label">Alternative Number</label>
+                            <input type="text" class="form-control" id="edit-alt-mobile">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save-changes">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    window.jsPDF = window.jspdf.jsPDF;
+</script>
 <script>
     const rechargeHistory = [
-        { id: "TXN123", date: "2025-02-15", plan: "Basic Plan", amount: "$10", status: "Success" },
-        { id: "TXN124", date: "2025-02-14", plan: "Premium Plan", amount: "$20", status: "Success" }
+        { id: "TXN123", date: "2025-02-15", time: "14:30", plan: "Basic Plan", amount: 10, status: "Success", gst: 1.8, discount: 0 },
+        { id: "TXN124", date: "2025-02-14", time: "09:45", plan: "Premium Plan", amount: 20, status: "Success", gst: 3.6, discount: 2 }
     ];
 
-    function populateRechargeHistory(data = rechargeHistory, targetId = "history-list") {
-        const historyList = document.getElementById(targetId);
-        historyList.innerHTML = "";
+    // Simplified main function to populate history
+    function populateRechargeHistory(historyData = rechargeHistory, listId = "history-lists") {
+        const historyList = document.getElementById(listId);
+        historyList.innerHTML = '';
 
-        data.forEach(history => {
-            let row = `
-                <tr>
-                    <td>${history.id}</td>
-                    <td>${history.date}</td>
-                    <td>${history.plan}</td>
-                    <td>${history.amount}</td>
-                    <td>${history.status}</td>
-                    <td><i class="fas fa-download download-icon" style="cursor: pointer;" data-id="${history.id}"></i></td>
-                </tr>
-            `;
-            historyList.innerHTML += row;
+        if (historyData.length === 0) {
+            historyList.innerHTML = '<tr><td colspan="6">No records found for the selected date range.</td></tr>';
+            return;
+        }
+
+        historyData.forEach(transaction => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td>${transaction.id}</td>
+            <td>${transaction.date}</td>
+            <td>${transaction.plan}</td>
+            <td>₹${transaction.amount.toFixed(2)}</td>
+            <td><span class="badge bg-success">${transaction.status}</span></td>
+            <td><i class="fas fa-download download-icon" data-id="${transaction.id}"></i></td>
+        `;
+            historyList.appendChild(row);
         });
 
-        // Add event listeners for download icons
-        document.querySelectorAll(".download-icon").forEach(icon => {
-            icon.addEventListener("click", function () {
-                const transactionId = this.getAttribute("data-id");
-                const transaction = rechargeHistory.find(item => item.id === transactionId);
-                if (transaction) {
-                    const doc = new jsPDF();
-                    doc.text(`Transaction ID: ${transaction.id}`, 10, 10);
-                    doc.text(`Date: ${transaction.date}`, 10, 20);
-                    doc.text(`Plan: ${transaction.plan}`, 10, 30);
-                    doc.text(`Amount: ${transaction.amount}`, 10, 40);
-                    doc.text(`Status: ${transaction.status}`, 10, 50);
-                    doc.save(`Transaction_${transaction.id}.pdf`);
-                }
-            });
-        });
+        // Add download event listeners
+        document.querySelectorAll('.download-icon').forEach(icon => {
+        icon.addEventListener('click', () => {
+        const transaction = rechargeHistory.find(t => t.id === icon.dataset.id);
+        transaction && generateInvoice(transaction);
+    });
+    });
     }
 
-    populateRechargeHistory();
+        // Enhanced PDF generation function
+        function generateInvoice(transaction) {
+        const doc = new jsPDF();
+        const primaryColor = '#2c3e50';
+        const secondaryColor = '#7f8c8d';
+        let yPos = 30;
+
+        // Add header
+        doc.setFillColor(primaryColor);
+        doc.rect(0, 0, 210, 25, 'F');
+        doc.setFontSize(18);
+        doc.setTextColor(255);
+        doc.text('INVOICE', 105, 15, { align: 'center' });
+
+        // Company Info
+        doc.setFontSize(10);
+        doc.setTextColor(secondaryColor);
+        doc.text('Company Name: Mobile Recharge Inc.', 15, 35);
+        doc.text('Contact: support@mobilerecharge.com', 15, 40);
+
+        // Transaction Details
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColor);
+        doc.text(`Transaction ID: ${transaction.id}`, 15, 60);
+        doc.text(`Date: ${new Date(transaction.date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+    })}`, 15, 65);
+        doc.text(`Time: ${transaction.time}`, 15, 70);
+        // Divider line
+        doc.setDrawColor(secondaryColor);
+        doc.line(15, 70, 195, 70);
+
+        // Plan Details
+        yPos = 80;
+        doc.setFontSize(14);
+        doc.text('Plan Details', 15, yPos);
+        yPos += 10;
+
+        const planDetails = [
+        ['Plan Name:', transaction.plan],
+        ['Base Price:', `$${transaction.amount.toFixed(2)}`],
+        ['GST (18%):', `$${transaction.gst.toFixed(2)}`],
+        ['Discount:', `-$${transaction.discount.toFixed(2)}`],
+        ['Total Amount:', `$${(transaction.amount + transaction.gst - transaction.discount).toFixed(2)}`]
+        ];
+
+        planDetails.forEach(([label, value]) => {
+        doc.setFontSize(12);
+        doc.setTextColor(secondaryColor);
+        doc.text(label, 20, yPos);
+        doc.setTextColor(primaryColor);
+        doc.text(value, 70, yPos);
+        yPos += 8;
+    });
+
+        // Footer
+        doc.setFontSize(10);
+        doc.setTextColor(secondaryColor);
+        doc.text('Thank you for choosing our service!', 105, 150, { align: 'center' });
+        doc.text('Terms: All sales are final. For support, contact us at support@mobilerecharge.com',
+        105, 160, { align: 'center' });
+
+        // Save PDF
+        doc.save(`invoice-${transaction.id}.pdf`);
+    }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', populateRechargeHistory);
+
 
     document.querySelector(".logout-btn").addEventListener("click", function() {
         alert("You have logged out.");
     });
 
+    document.querySelector(".edit-btn").addEventListener("click", function() {
+        // Pre-fill the modal with current data
+        document.getElementById("edit-name").value = document.getElementById("user-name").textContent;
+        document.getElementById("edit-email").value = document.getElementById("user-email").textContent;
+        document.getElementById("edit-mobile").value = document.getElementById("user-mobile").textContent;
+        document.getElementById("edit-alt-mobile").value = document.getElementById("user-alt-mobile").textContent;
+    });
+
     document.getElementById("save-changes").addEventListener("click", function() {
-        const name = document.getElementById("edit-name").value;
         const email = document.getElementById("edit-email").value;
-        const mobile = document.getElementById("edit-mobile").value;
+        const altMobile = document.getElementById("edit-alt-mobile").value;
 
-        document.getElementById("user-name").textContent = name;
+        // Update only the editable fields
         document.getElementById("user-email").textContent = email;
-        document.getElementById("user-mobile").textContent = mobile;
+        document.getElementById("user-alt-mobile").textContent = altMobile;
 
-        var modal = new bootstrap.Modal(document.getElementById('editModal'));
+        // Hide the modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
         modal.hide();
     });
+
 
     document.getElementById("menu-toggle").addEventListener("click", function() {
         document.getElementById("sidebar").classList.toggle("active");
@@ -538,11 +608,13 @@
     function filterHistoryByDate(startDate, endDate) {
         const filteredHistory = rechargeHistory.filter(historyItem => {
             const historyDate = new Date(historyItem.date);
-            return (!startDate || historyDate >= new Date(startDate)) && (!endDate || historyDate <= new Date(endDate));
+            return (!startDate || historyDate >= new Date(startDate)) &&
+                (!endDate || historyDate <= new Date(endDate));
         });
         populateRechargeHistory(filteredHistory, "history-lists");
     }
 
+    // Event listener for the filter button
     document.getElementById("view-all-btn").addEventListener("click", function() {
         const startDate = document.getElementById("start-date").value;
         const endDate = document.getElementById("end-date").value;

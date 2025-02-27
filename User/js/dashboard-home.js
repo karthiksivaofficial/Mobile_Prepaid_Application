@@ -30,20 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.getElementById('logout-link').addEventListener("click", function (e) {
-    // e.preventDefault();
-    //
-    // // Show logout alert
-    // document.getElementById('logout-alert').style.display = "block";
-    //
-    // // Delay the logout action to allow the user to see the alert
-    // setTimeout(() => {
-    //     localStorage.removeItem("loggedIn");
-    //     localStorage.removeItem("userName");
-    //     localStorage.removeItem("userPhone");
-    //
-    //     // Redirect to the home page
-    //     window.location.href = "./index.html";
-    // }, 2000); // 2 seconds delay
     logout();
 });
 

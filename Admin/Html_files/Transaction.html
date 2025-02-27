@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Prepaid Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../stylesheet/styles.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="hamburger"><i class="fas fa-bars"></i></div>
+    <div class="sidebar-header"><h4>Prepaid Admin</h4></div>
+    <hr/>
+    <a href="#" class="menu-item" id="dashboard"><i class="fas fa-home"></i><span>Dashboard</span></a>
+    <a href="#" class="menu-item" id="user-management"><i class="fas fa-users"></i><span>User Management</span></a>
+    <a href="#" class="menu-item" id="plan-management"><i class="fas fa-tags"></i><span>Plan Management</span></a>
+    <a href="#" class="menu-item active" id="transaction"><i class="fas fa-exchange-alt"></i><span>Transactions</span></a>
+    <a href="#" class="menu-item" id="support"><i class="fas fa-headset"></i><span>Support</span></a>
+    <a href="#" class="menu-item" id="analysis"><i class="fas fa-chart-line"></i><span>Analysis</span></a>
+    <a href="#" class="menu-item logout-item" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+</div>
+
+<div class="content">
+    <div class="top-bar">
+        <h2 class="top-bar-title">Transactions</h2>
+        <div class="top-bar-actions">
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search transactions..."></div>
+            <button class="btn btn-primary"><i class="fas fa-download me-2"></i>Export</button>
+            <div class="user-actions">
+                <div class="icon-btn"><i class="fas fa-bell"></i></div>
+                <div class="icon-btn"><i class="fas fa-user"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-wallet"></i></div><div class="card-body"><h3>₹127K</h3><p>Total Revenue (Month)</p></div></div></div></div>
+        <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(247, 37, 133, 0.1); color: #F72585;"><i class="fas fa-receipt"></i></div><div class="card-body"><h3>1,482</h3><p>Transactions (Month)</p></div></div></div></div>
+        <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-money-bill-wave"></i></div><div class="card-body"><h3>₹85.75</h3><p>Avg Transaction</p></div></div></div></div>
+        <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-arrow-trend-up"></i></div><div class="card-body"><h3>+12.5%</h3><p>Growth Rate</p></div></div></div></div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3"><label for="dateRange" class="form-label">Date Range</label><select class="form-select" id="dateRange"><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="last7days">Last 7 Days</option><option value="last30days" selected>Last 30 Days</option><option value="thisMonth">This Month</option><option value="lastMonth">Last Month</option><option value="custom">Custom Range</option></select></div>
+                <div class="col-md-3"><label for="paymentStatus" class="form-label">Payment Status</label><select class="form-select" id="paymentStatus"><option value="all" selected>All Statuses</option><option value="successful">Successful</option><option value="pending">Pending</option><option value="failed">Failed</option><option value="refunded">Refunded</option></select></div>
+                <div class="col-md-3"><label for="paymentMethod" class="form-label">Payment Method</label><select class="form-select" id="paymentMethod"><option value="all" selected>All Methods</option><option value="creditCard">Credit Card</option><option value="bankTransfer">Bank Transfer</option><option value="paypal">PayPal</option><option value="wallet">Digital Wallet</option></select></div>
+                <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary w-100">Apply Filters</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <div class="table-header"><h5 class="mb-0">Recent Transactions</h5><div class="d-flex gap-2"><select class="form-select form-select-sm" id="recordsPerPage"><option value="10">10 per page</option><option value="25" selected>25 per page</option><option value="50">50 per page</option><option value="100">100 per page</option></select></div></div>
+        <table class="table">
+            <thead><tr><th>Transaction ID</th><th>Customer</th><th>Date & Time</th><th>Amount</th><th>Plan</th><th>Payment Method</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="transactions-table"></tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center p-3">
+            <div>Showing <span id="showing-records">1-25</span> of <span id="total-records">1,482</span> records</div>
+            <div class="pagination-container">
+                <button class="btn btn-sm btn-outline-secondary me-2" disabled><i class="fas fa-chevron-left"></i></button>
+                <button class="btn btn-sm btn-primary me-1">1</button>
+                <button class="btn btn-sm btn-outline-secondary me-1">2</button>
+                <button class="btn btn-sm btn-outline-secondary me-1">3</button>
+                <button class="btn btn-sm btn-outline-secondary me-1">4</button>
+                <button class="btn btn-sm btn-outline-secondary me-2">5</button>
+                <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const transactions = [
+        { id: "TRX-12345", customer: "karthik", date: "2025-02-24 14:23:45", amount: "₹59.99", plan: "Premium Plan", method: "Credit Card", status: "successful" },
+        { id: "TRX-12346", customer: "siva", date: "2025-02-24 12:15:33", amount: "₹29.99", plan: "Standard Plan", method: "PayPal", status: "successful" },
+        { id: "TRX-12347", customer: "fazil", date: "2025-02-23 18:45:12", amount: "₹99.99", plan: "Ultimate Plan", method: "Bank Transfer", status: "pending" },
+        { id: "TRX-12348", customer: "dilip", date: "2025-02-23 09:22:10", amount: "₹9.99", plan: "Basic Plan", method: "Digital Wallet", status: "successful" },
+        { id: "TRX-12349", customer: "kalai", date: "2025-02-22 16:08:55", amount: "₹19.99", plan: "Standard Plan", method: "Credit Card", status: "failed" },
+        { id: "TRX-12350", customer: "madhav", date: "2025-02-22 11:30:42", amount: "₹59.99", plan: "Premium Plan", method: "PayPal", status: "successful" },
+        { id: "TRX-12351", customer: "safthar", date: "2025-02-21 20:17:33", amount: "₹29.99", plan: "Standard Plan", method: "Digital Wallet", status: "successful" },
+        { id: "TRX-12352", customer: "abishek", date: "2025-02-21 15:45:18", amount: "₹9.99", plan: "Basic Plan", method: "Credit Card", status: "refunded" }
+    ];
+
+    function populateTransactionsTable() {
+        document.getElementById('transactions-table').innerHTML = transactions.map(t => {
+            const statusClass = t.status === 'successful' ? 'status-active' : t.status === 'pending' || t.status === 'refunded' ? 'status-warning' : 'status-inactive';
+            return `<tr><td><strong>${t.id}</strong></td><td>${t.customer}</td><td>${t.date}</td><td>${t.amount}</td><td>${t.plan}</td><td>${t.method}</td><td><span class="status-badge ${statusClass}">${t.status.charAt(0).toUpperCase() + t.status.slice(1)}</span></td><td><button class="btn btn-sm btn-outline-primary me-1" title="View Details"><i class="fas fa-eye"></i></button><button class="btn btn-sm btn-outline-secondary" title="Download Receipt"><i class="fas fa-download"></i></button></td></tr>`;
+        }).join('');
+    }
+
+    function setupNavigation() {
+        const navLinks = {"user-management": "./userManagement.html", "plan-management": "./planManagement.html", "dashboard": "./dashboard.html", "transaction": "./Transaction.html", "analysis": "./analysis.html", "support": "./support.html"};
+        Object.keys(navLinks).forEach(id => document.getElementById(id).addEventListener("click", () => window.location.href = navLinks[id]));
+    }
+
+    function setupSidebarToggle() {
+        const hamburger = document.querySelector('.hamburger'), sidebar = document.querySelector('.sidebar'), content = document.querySelector('.content');
+        hamburger.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); content.classList.toggle('expanded'); });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setupNavigation();
+        setupSidebarToggle();
+        populateTransactionsTable();
+    });
+</script>
+<script src="../javascript/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management - Prepaid Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="../stylesheet/styles.css">
+</head>
+<body>
+<div class="sidebar">
+  <div class="hamburger"><i class="fas fa-bars"></i></div>
+  <div class="sidebar-header"><h4>Prepaid Admin</h4></div>
+  <hr/>
+  <a href="#" class="menu-item" id="dashboard"><i class="fas fa-home"></i><span>Dashboard</span></a>
+  <a href="#" class="menu-item active" id="user-management"><i class="fas fa-users"></i><span>User Management</span></a>
+  <a href="#" class="menu-item" id="plan-management"><i class="fas fa-tags"></i><span>Plan Management</span></a>
+  <a href="#" class="menu-item" id="transaction"><i class="fas fa-exchange-alt"></i><span>Transactions</span></a>
+  <a href="#" class="menu-item" id="support"><i class="fas fa-headset"></i><span>Support</span></a>
+  <a href="#" class="menu-item" id="analysis"><i class="fas fa-chart-line"></i><span>Analysis</span></a>
+  <a href="#" class="menu-item logout-item" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+</div>
+
+<div class="content">
+  <div class="top-bar">
+    <h2 class="top-bar-title">User Management</h2>
+    <div class="top-bar-actions">
+      <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search users..."></div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-plus me-2"></i>Update User</button>
+      <div class="user-actions">
+        <div class="icon-btn"><i class="fas fa-bell"></i></div>
+        <div class="icon-btn"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card" id="active-card" onclick="showTable('active')">
+        <div class="card-flex">
+          <div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-user-check"></i></div>
+          <div class="card-body"><h3>2,194</h3><p>Active Users</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card" id="expiry-card" onclick="showTable('expiry')">
+        <div class="card-flex">
+          <div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-calendar-times"></i></div>
+          <div class="card-body"><h3>53</h3><p>Expiring Soon</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card" id="inactive-card" onclick="showTable('inactive')">
+        <div class="card-flex">
+          <div class="card-icon" style="background: rgba(247, 37, 133, 0.1); color: #F72585;"><i class="fas fa-user-times"></i></div>
+          <div class="card-body"><h3>76</h3><p>Inactive Users</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive" id="table-container" style="display: none;">
+    <div class="table-header"><h5 class="mb-0" id="table-title">User List</h5><div class="d-flex gap-2"><select class="form-select form-select-sm"><option>All Users</option><option>Active</option><option>Inactive</option><option>Expiring Soon</option></select><button class="btn btn-sm btn-primary">Export</button></div></div>
+    <table class="table">
+      <thead><tr><th>Name</th><th>Phone Number</th><th>Plan</th><th>Expiry Date</th><th>Last Transaction</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserModalLabel">update User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addUserForm">
+          <div class="row g-3">
+            <div class="col-md-6"><label for="userName" class="form-label">Full Name</label><input type="text" class="form-control" id="userName" required></div>
+            <div class="col-md-6"><label for="userPhone" class="form-label">Phone Number</label><input type="tel" class="form-control" id="userPhone" required></div>
+            <div class="col-md-6"><label for="userPlan" class="form-label">Select Plan</label><select class="form-select" id="userPlan" required><option value="">Choose a plan</option><option value="basic">Basic Plan</option><option value="standard">Standard Plan</option><option value="premium">Premium Plan</option><option value="ultimate">Ultimate Plan</option></select></div>
+            <div class="col-md-6"><label for="userStatus" class="form-label">Status</label><select class="form-select" id="userStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveUserBtn">Save User</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const users = [
+    { name: "karthik", phone: "123-456-7890", plan: "Basic Plan", expiry: "2025-03-15", lastTransaction: "2025-02-01", amount: "₹100", status: "Active" },
+    { name: "siva", phone: "987-654-3210", plan: "Premium Plan", expiry: "2025-02-25", lastTransaction: "2025-01-15", amount: "₹200", status: "Active" },
+    { name: "fazil", phone: "555-666-7777", plan: "Standard Plan", expiry: "2025-05-10", lastTransaction: "2025-02-05", amount: "₹150", status: "Inactive" },
+    { name: "kalai", phone: "333-444-5555", plan: "Basic Plan", expiry: "2025-02-20", lastTransaction: "2025-01-28", amount: "₹120", status: "Expiring Soon" }
+  ];
+
+  function showTable(status) {
+    document.getElementById('table-title').textContent = status === 'active' ? 'Active Users' : status === 'expiry' ? 'Users Expiring Soon' : 'Inactive Users';
+    const filteredUsers = users.filter(u => u.status === (status === 'active' ? "Active" : status === 'expiry' ? "Expiring Soon" : "Inactive"));
+    const tableBody = document.getElementById('table-body');
+    tableBody.innerHTML = filteredUsers.map(u => {
+      const statusClass = u.status === 'Active' ? 'status-active' : u.status === 'Inactive' ? 'status-inactive' : 'status-warning';
+      return `<tr><td>${u.name}</td><td>${u.phone}</td><td>${u.plan}</td><td>${u.expiry}</td><td>${u.lastTransaction}</td><td>${u.amount}</td><td><span class="status-badge ${statusClass}">${u.status}</span></td><td><button class="btn btn-sm btn-primary me-1"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></td></tr>`;
+    }).join('');
+    document.getElementById('table-container').style.display = 'block';
+  }
+
+  function setupNavigation() {
+    const navLinks = {"user-management": "./userManagement.html", "plan-management": "./planManagement.html", "dashboard": "./dashboard.html", "transaction": "./Transaction.html", "analysis": "./analysis.html", "support": "./support.html"};
+    Object.keys(navLinks).forEach(id => document.getElementById(id).addEventListener("click", () => window.location.href = navLinks[id]));
+  }
+
+  function setupSidebarToggle() {
+    const hamburger = document.querySelector('.hamburger'), sidebar = document.querySelector('.sidebar'), content = document.querySelector('.content');
+    hamburger.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); content.classList.toggle('expanded'); });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setupNavigation();
+    setupSidebarToggle();
+    showTable('active');
+    document.getElementById('saveUserBtn')?.addEventListener('click', () => {
+      alert('User saved successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
+    });
+  });
+</script>
+<script src="../javascript/script.js"></script>
+</body>
+</html>

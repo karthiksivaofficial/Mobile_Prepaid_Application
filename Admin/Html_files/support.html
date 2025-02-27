@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support - Prepaid Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="../stylesheet/styles.css">
+</head>
+<body>
+<div class="sidebar">
+  <div class="hamburger"><i class="fas fa-bars"></i></div>
+  <div class="sidebar-header"><h4>Prepaid Admin</h4></div>
+  <hr/>
+  <a href="#" class="menu-item" id="dashboard"><i class="fas fa-home"></i><span>Dashboard</span></a>
+  <a href="#" class="menu-item" id="user-management"><i class="fas fa-users"></i><span>User Management</span></a>
+  <a href="#" class="menu-item" id="plan-management"><i class="fas fa-tags"></i><span>Plan Management</span></a>
+  <a href="#" class="menu-item" id="transaction"><i class="fas fa-exchange-alt"></i><span>Transactions</span></a>
+  <a href="#" class="menu-item active" id="support"><i class="fas fa-headset"></i><span>Support</span></a>
+  <a href="#" class="menu-item" id="analysis"><i class="fas fa-chart-line"></i><span>Analysis</span></a>
+  <a href="#" class="menu-item logout-item" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+</div>
+
+<div class="content">
+  <div class="top-bar">
+    <h2 class="top-bar-title">Support Tickets</h2>
+    <div class="top-bar-actions">
+      <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search tickets..."></div>
+      <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Update Ticket</button>
+      <div class="user-actions">
+        <div class="icon-btn"><i class="fas fa-bell"></i></div>
+        <div class="icon-btn"><i class="fas fa-user"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-ticket-alt"></i></div><div class="card-body"><h3>12</h3><p>Total Tickets</p></div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-clock"></i></div><div class="card-body"><h3>5</h3><p>Pending</p></div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(114, 9, 183, 0.1); color: #7209B7;"><i class="fas fa-sync"></i></div><div class="card-body"><h3>4</h3><p>Processing</p></div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-check-circle"></i></div><div class="card-body"><h3>3</h3><p>Resolved</p></div></div></div></div>
+  </div>
+
+  <div class="table-responsive">
+    <div class="table-header"><h5 class="mb-0">Customer Support Tickets</h5><div class="d-flex gap-2"><select class="form-select form-select-sm"><option>All Tickets</option><option>Pending</option><option>Processing</option><option>Resolved</option><option>Denied</option></select><button class="btn btn-sm btn-primary">Export</button></div></div>
+    <table class="table">
+      <thead><tr><th>Ticket ID</th><th>Customer</th><th>Subject</th><th>Created</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="tickets-table">
+      <tr><td><strong>#001</strong></td><td><div class="d-flex align-items-center"><div class="icon-btn me-2"><i class="fas fa-user"></i></div><div><div>karthik</div><small class="text-muted">karthik@gmail.com</small></div></div></td><td>Issue with payment</td><td>2 hours ago</td><td><select class="form-select form-select-sm status-select"><option value="Processing" selected>Processing</option><option value="Resolved">Resolved</option><option value="Denied">Denied</option></select></td><td><button class="btn btn-sm btn-primary save-btn">Save</button><button class="btn btn-sm btn-outline-primary view-btn"><i class="fas fa-eye"></i></button></td></tr>
+      <tr><td><strong>#002</strong></td><td><div class="d-flex align-items-center"><div class="icon-btn me-2"><i class="fas fa-user"></i></div><div><div>siva</div><small class="text-muted">siva@gmail.com</small></div></div></td><td>Account locked</td><td>3 days ago</td><td><select class="form-select form-select-sm status-select"><option value="Processing">Processing</option><option value="Resolved" selected>Resolved</option><option value="Denied">Denied</option></select></td><td><button class="btn btn-sm btn-primary save-btn">Save</button><button class="btn btn-sm btn-outline-primary view-btn"><i class="fas fa-eye"></i></button></td></tr>
+      <tr><td><strong>#003</strong></td><td><div class="d-flex align-items-center"><div class="icon-btn me-2"><i class="fas fa-user"></i></div><div><div>kalai</div><small class="text-muted">kalai@gmail.com</small></div></div></td><td>Data not working</td><td>1 day ago</td><td><select class="form-select form-select-sm status-select"><option value="Processing" selected>Processing</option><option value="Resolved">Resolved</option><option value="Denied">Denied</option></select></td><td><button class="btn btn-sm btn-primary save-btn">Save</button><button class="btn btn-sm btn-outline-primary view-btn"><i class="fas fa-eye"></i></button></td></tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-between align-items-center mt-4"><div>Showing 1 to 3 of 12 entries</div><nav><ul class="pagination"><li class="page-item disabled"><a class="page-link" href="#">Previous</a></li><li class="page-item active"><a class="page-link" href="#">1</a></li><li class="page-item"><a class="page-link" href="#">2</a></li><li class="page-item"><a class="page-link" href="#">3</a></li><li class="page-item"><a class="page-link" href="#">Next</a></li></ul></nav></div>
+  </div>
+</div>
+
+<div class="modal fade" id="viewTicketModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ticket #001 - Issue with payment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4"><h6 class="fw-bold">Customer Information</h6><div class="d-flex"><div class="me-4"><div class="icon-btn mb-2" style="width: 50px; height: 50px;"><i class="fas fa-user"></i></div></div><div><p class="mb-1"><strong>Name:</strong> John Doe</p><p class="mb-1"><strong>Email:</strong> johndoe@example.com</p><p class="mb-1"><strong>Phone:</strong> +1 234 567 8901</p><p class="mb-1"><strong>Plan:</strong> Premium</p></div></div></div>
+        <div class="mb-4"><h6 class="fw-bold">Ticket Details</h6><p class="mb-1"><strong>Created:</strong> Feb 24, 2025 at 10:30 AM</p><p class="mb-1"><strong>Status:</strong> <span class="badge bg-warning">Processing</span></p><p class="mb-1"><strong>Priority:</strong> High</p></div>
+        <div class="mb-4"><h6 class="fw-bold">Description</h6><p>I tried to make a payment for my monthly plan renewal but the transaction failed. However, the amount was deducted from my account. Please help me resolve this issue as soon as possible.</p></div>
+        <div class="mb-4"><h6 class="fw-bold">Conversation</h6><div class="card mb-2"><div class="card-body"><div class="d-flex justify-content-between mb-2"><strong>Support Agent</strong><small>Today at 11:15 AM</small></div><p class="mb-0">Hello John, I understand your concern. Let me check your payment records and get back to you.</p></div></div><div class="card mb-3"><div class="card-body"><div class="d-flex justify-content-between mb-2"><strong>John Doe</strong><small>Today at 11:30 AM</small></div><p class="mb-0">Thank you for your prompt response. I'm waiting for your assistance.</p></div></div><div class="mb-3"><textarea class="form-control" rows="3" placeholder="Type your reply..."></textarea></div><button class="btn btn-primary">Send Reply</button></div>
+      </div>
+      <div class="modal-footer"><select class="form-select me-2" style="width: auto;"><option value="Processing" selected>Processing</option><option value="Resolved">Resolved</option><option value="Denied">Denied</option></select><button type="button" class="btn btn-primary">Update Status</button><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function setupNavigation() {
+    const navLinks = {"user-management": "./userManagement.html", "plan-management": "./planManagement.html", "dashboard": "./dashboard.html", "transaction": "./Transaction.html", "analysis": "./analysis.html", "support": "./support.html"};
+    Object.keys(navLinks).forEach(id => document.getElementById(id).addEventListener("click", () => window.location.href = navLinks[id]));
+  }
+
+  function setupSidebarToggle() {
+    const hamburger = document.querySelector('.hamburger'), sidebar = document.querySelector('.sidebar'), content = document.querySelector('.content');
+    hamburger.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); content.classList.toggle('expanded'); });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setupNavigation();
+    setupSidebarToggle();
+    document.querySelectorAll('.save-btn').forEach(btn => btn.addEventListener('click', () => alert(`Status for Ticket ${btn.closest('tr').cells[0].textContent} updated to: ${btn.closest('tr').querySelector('.status-select').value}`)));
+    document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => new bootstrap.Modal(document.getElementById('viewTicketModal')).show()));
+  });
+</script>
+<script src="../javascript/script.js"></script>
+</body>
+</html>
