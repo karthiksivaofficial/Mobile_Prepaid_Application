@@ -23,7 +23,7 @@ document.getElementById('submitOtp').addEventListener("click", function () {
         localStorage.setItem("floatingInput", phone);
         localStorage.setItem("loggedIn", "true");
         localStorage.setItem("userName", "User");
-        window.location.href = "./userDashboard.html";
+        window.location.href = "./User_Dashboard.html";
     } else {
         alert("Please enter all OTP digits.");
         otpInputs[0].focus();
