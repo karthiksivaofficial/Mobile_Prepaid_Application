@@ -260,9 +260,9 @@ function logout() {
 
     setTimeout(function () {
 
-        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("loggedIns");
 
         document.body.removeChild(loadingOverlay);
-        window.location.href = "../User/index.html";
+        window.location.href = "../Html_files/index.html";
     }, 2000);
 }

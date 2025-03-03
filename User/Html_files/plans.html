@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RechargeFlow - Plans</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root{--primary-color:#5856d6;--secondary-color:#e9ecef;--accent-color:#ff9500;--text-dark:#343a40;--text-light:#6c757d}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8f9fa;color:var(--text-dark)}
+        .sticky-top{background:rgba(255,255,255,0.95);box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+        .navbar-brand{font-weight:700;color:var(--primary-color)}
+        .nav-link{font-weight:500;margin:0 10px;transition:color .3s}
+        .nav-link:hover,.nav-link.active{color:var(--primary-color)}
+        .search-container{position:relative}.search-icon{position:absolute;left:10px;top:10px;color:#adb5bd}
+        #searchPlans{padding-left:35px;border-radius:20px;border:1px solid #ced4da}
+        .category-tabs{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .category-tabs::-webkit-scrollbar{display:none}
+        .category-tab{display:inline-block;padding:10px 15px;margin:0 5px;cursor:pointer;color:var(--text-light);border-bottom:2px solid transparent;transition:all .3s}
+        .category-tab.active{color:var(--primary-color);border-bottom:2px solid var(--primary-color);font-weight:700}
+        .filter-icon{cursor:pointer;color:var(--text-dark);font-size:1.2rem}
+        .plan-card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);transition:transform .3s,box-shadow .3s;height:100%;display:flex;flex-direction:column}
+        .plan-card:hover{transform:translateY(-5px);box-shadow:0 5px 15px rgba(0,0,0,0.1)}
+        .plan-price{font-size:1.5rem;font-weight:700;color:var(--primary-color)}
+        .plan-validity{font-size:.9rem;color:var(--text-light)}
+        .plan-data{font-size:1.2rem;font-weight:700;margin-bottom:10px}
+        .plan-benefits{font-size:.9rem;color:var(--text-light);flex-grow:1}
+        .benefit-item{margin-bottom:5px}
+        .select-plan-btn{background:var(--primary-color);color:#fff;border:none;border-radius:20px;padding:8px 20px;width:100%;transition:background .3s}
+        .select-plan-btn:hover{background:#4a49be}
+        .special-offer{background:#ffedd5;border-left:3px solid var(--accent-color);padding:5px 10px;margin-top:10px;font-size:.85rem;font-weight:700;color:#f76707}
+        .filter-panel{position:fixed;top:0;right:-350px;width:350px;height:100%;background:#fff;box-shadow:-2px 0 10px rgba(0,0,0,0.1);z-index:1010;padding:20px;overflow-y:auto;transition:right .3s}
+        .filter-panel.open{right:0}
+        .filter-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1005;display:none}
+        .filter-overlay.open{display:block}
+        .filter-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+        .filter-title{font-size:1.2rem;font-weight:700}
+        .close-filter{cursor:pointer;font-size:1.2rem}
+        .filter-section{margin-bottom:20px}
+        .filter-section-title{font-size:1rem;font-weight:700;margin-bottom:10px}
+        .data-limit-options,.validity-options{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}
+        .data-option,.validity-option{padding:8px 15px;background:var(--secondary-color);border-radius:20px;cursor:pointer;font-size:.9rem;transition:all .3s}
+        .data-option.selected,.validity-option.selected{background:var(--primary-color);color:#fff}
+        .filter-buttons{display:flex;gap:10px;margin-top:20px}
+        .apply-filters-btn{background:var(--primary-color);color:#fff;border:none;border-radius:5px;padding:10px 15px;flex:1}
+        .reset-filters-btn{background:var(--secondary-color);color:var(--text-dark);border:none;border-radius:5px;padding:10px 15px;flex:1}
+        .promo-section,.recharge-info{background:#fff;border-radius:10px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+        .coupon-input{display:flex;gap:10px;margin-bottom:15px}
+        .promo-input{flex:1;border-radius:5px;border:1px solid #ced4da;padding:8px 15px}
+        .apply-promo-btn{background:var(--primary-color);color:#fff;border:none;border-radius:5px;padding:8px 15px}
+        .coupon-suggestions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+        .coupon-chip{background:var(--secondary-color);padding:5px 15px;border-radius:20px;font-size:.85rem;cursor:pointer;transition:background .3s}
+        .coupon-chip:hover{background:#dee2e6}
+        .sort-options{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+        .sort-label{font-size:.9rem;color:var(--text-light)}
+        .sort-select{flex:1;padding:5px 10px;border-radius:5px;border:1px solid #ced4da}
+        .sticky-footer{position:fixed;bottom:0;left:0;width:100%;background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,0.1);padding:15px;display:flex;justify-content:space-between;align-items:center;z-index:999;transform:translateY(100%);transition:transform .3s}
+        .sticky-footer.active{transform:translateY(0)}
+        .selected-plan-info{font-size:.9rem}
+        .selected-plan-price{font-weight:700;color:var(--primary-color)}
+        .checkout-btn{background:var(--primary-color);color:#fff;border:none;border-radius:20px;padding:8px 20px}
+        .checkout-btn:disabled{background:var(--text-light);cursor:not-allowed}
+        .discount-alert{display:none;margin-top:10px}
+        .no-results{text-align:center;padding:40px 0;color:var(--text-light)}
+        .banner{background:linear-gradient(135deg,#5856d6 0%,#7e7af6 100%);color:#fff;padding:20px;border-radius:10px;margin-bottom:20px;text-align:center}
+        .banner h2{margin-bottom:10px;font-weight:700}
+        .banner p{margin-bottom:0;font-size:1rem}
+        .features-section{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+        .feature-item{display:flex;align-items:center;margin-bottom:15px}
+        .feature-icon{width:40px;height:40px;background:#e6e6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-right:15px;color:var(--primary-color)}
+        .feature-text{flex:1}
+        .feature-title{font-weight:700;margin-bottom:3px}
+        .feature-description{color:var(--text-light);font-size:.9rem}
+        @media (max-width:768px){.filter-panel{width:100%;right:-100%}}
+    </style>
+</head>
+<body>
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-bolt"></i> RechargeFlow</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="plans.html">Plans</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#offers">Offers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#support">Support</a></li>
+                </ul>
+                <div id="profile-dropdown">
+                    <div class="ms-3 d-none" id="profile-section">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> My Profile
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="User_Dashboard.html"><i class="fas fa-user"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ms-3" id="login-section">
+                        <button class="btn btn-primary" id="loginBtn">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<section id="plans" class="py-5 bg-light">
+    <div class="container mt-3">
+        <div class="banner">
+            <h2>Find the Perfect Mobile Plan</h2>
+            <p>Compare plans from top providers and save up to 30% with exclusive offers</p>
+        </div>
+
+        <div class="features-section mb-4">
+            <h4 class="mb-3">Top Features</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-search"></i></div>
+                        <div class="feature-text">
+                            <div class="feature-title">Easy Search</div>
+                            <div class="feature-description">Find plans that match your needs instantly</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-filter"></i></div>
+                        <div class="feature-text">
+                            <div class="feature-title">Advanced Filters</div>
+                            <div class="feature-description">Filter by data, price, and validity</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-tags"></i></div>
+                        <div class="feature-text">
+                            <div class="feature-title">Exclusive Discounts</div>
+                            <div class="feature-description">Apply coupons for additional savings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="recharge-info">
+                    <h5 class="fw-bold mb-3">Recharging for</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fs-6 fw-bold" id="phoneNumber"></span>
+                        <a class="text-primary" href="#" data-bs-toggle="modal" data-bs-target="#changeNumberModal">Change</a>
+                    </div>
+                    <p>Operator: <span id="operatorDisplay">RechargeFlow</span></p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="promo-section">
+                    <h5>Apply Coupon Code</h5>
+                    <div class="coupon-input">
+                        <input type="text" class="promo-input" id="promoCode" placeholder="Enter promo code">
+                        <button class="apply-promo-btn" id="applyPromo">Apply</button>
+                    </div>
+                    <div class="alert alert-success discount-alert" id="discountAlert">Coupon applied successfully!</div>
+<!--                    <div class="coupon-suggestions">-->
+<!--                        <div class="coupon-chip" data-code="SAVE50">SAVE50 for ₹50 off</div>-->
+<!--                        <div class="coupon-chip" data-code="NEW100">NEW100 for ₹100 off</div>-->
+<!--                        <div class="coupon-chip" data-code="EXTRA20">EXTRA20 for 20% off</div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center mb-3">
+            <div class="col">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchPlans" class="form-control" placeholder="Search Plans...">
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="sort-options">
+                    <span class="sort-label">Sort By</span>
+                    <select class="sort-select" id="sortOptions">
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="data-low">Data: Low to High</option>
+                        <option value="data-high">Data: High to Low</option>
+                        <option value="validity-low">Validity: Short to Long</option>
+                        <option value="validity-high">Validity: Long to Short</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-auto filter-icon">
+                <span><i class="fas fa-filter"></i> Filters</span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <div class="category-tabs">
+                    <span class="category-tab active" data-category="popular">Popular Plans</span>
+                    <span class="category-tab" data-category="data">Data Packs</span>
+                    <span class="category-tab" data-category="talktime">Full Talktime</span>
+                    <span class="category-tab" data-category="roaming">International Roaming</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="plansContainer"></div>
+        <div class="no-results" id="noResults" style="display:none;">
+            <h4>No plans match your search</h4>
+            <p>Try adjusting your filters or search term</p>
+        </div>
+    </div>
+</section>
+
+<div class="filter-overlay" id="filterOverlay"></div>
+<div class="filter-panel" id="filterPanel">
+    <div class="filter-header">
+        <div class="filter-title">Filter Plans</div>
+        <div class="close-filter" id="closeFilter"><i class="fas fa-times"></i></div>
+    </div>
+    <div class="filter-section">
+        <div class="filter-section-title">Data Limit</div>
+        <div class="data-limit-options">
+            <div class="data-option" data-value="1">1 GB</div>
+            <div class="data-option" data-value="1.5">1.5 GB</div>
+            <div class="data-option" data-value="2">2 GB</div>
+            <div class="data-option" data-value="3">3 GB</div>
+            <div class="data-option" data-value="4">4 GB</div>
+            <div class="data-option" data-value="unlimited">Unlimited</div>
+        </div>
+    </div>
+    <div class="filter-section">
+        <div class="filter-section-title">Price Range</div>
+        <label for="priceRange" id="priceRangeLabel">₹0 - ₹3000</label>
+        <input type="range" class="form-range" id="priceRange" min="0" max="3000" value="3000">
+    </div>
+    <div class="filter-section">
+        <div class="filter-section-title">Validity</div>
+        <div class="validity-options">
+            <div class="validity-option" data-value="28">28 Days</div>
+            <div class="validity-option" data-value="56">56 Days</div>
+            <div class="validity-option" data-value="84">84 Days</div>
+            <div class="validity-option" data-value="365">365 Days</div>
+        </div>
+    </div>
+    <div class="filter-section">
+        <div class="filter-section-title">Special Offers</div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="specialOffersToggle">
+            <label class="form-check-label">Show only plans with special offers</label>
+        </div>
+    </div>
+    <div class="filter-buttons">
+        <button class="apply-filters-btn" id="applyFilters">Apply Filters</button>
+        <button class="reset-filters-btn" id="resetFilters">Reset</button>
+    </div>
+</div>
+
+<div class="sticky-footer" id="stickyFooter">
+    <div class="selected-plan-info">Selected Plan: <span id="selectedPlanName">-</span>
+        <div class="selected-plan-price">₹<span id="selectedPlanPrice">0</span></div>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" disabled>Proceed to Checkout</button>
+</div>
+
+<div class="modal fade" id="changeNumberModal" tabindex="-1" aria-labelledby="changeNumberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeNumberModalLabel">Change Mobile Number</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="newMobileNumber" placeholder="Enter new mobile number" maxlength="10">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveNumber">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="planDetailsModal" tabindex="-1" aria-labelledby="planDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="planDetailsModalLabel">Plan Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 id="modalPlanPrice"></h4>
+                <p id="modalPlanData"></p>
+                <ul id="modalPlanBenefits" class="list-unstyled"></ul>
+                <p id="modalPlanValidity"></p>
+                <p id="modalPlanDescription"></p>
+                <p id="modalSpecialOffer"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="modalSelectPlan">Select Plan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded',()=>{
+        const plansData=[
+            {id:1,price:199,dataLimit:1.5,dataUnit:"GB/Day",validity:28,benefits:["Unlimited Calling","100 SMS/Day"],description:"Best value plan for moderate data users",specialOffer:"₹20 Cashback on UPI payment",category:"popular",ott:[]},
+            {id:2,price:299,dataLimit:2,dataUnit:"GB/Day",validity:28,benefits:["Unlimited Calling","100 SMS/Day"],description:"Perfect for regular data users with daily needs",specialOffer:"",category:"popular",ott:["Amazon Prime (1 Month)"]},
+            {id:3,price:499,dataLimit:3,dataUnit:"GB/Day",validity:56,benefits:["Unlimited Calling","100 SMS/Day"],description:"Extended validity with generous data allowance",specialOffer:"₹50 Cashback on first recharge",category:"popular",ott:["Disney+ Hotstar (3 Months)"]},
+            {id:4,price:649,dataLimit:2,dataUnit:"GB/Day",validity:84,benefits:["Unlimited Calling","100 SMS/Day"],description:"Long-term plan with consistent data benefits",specialOffer:"",category:"popular",ott:["Netflix Basic (1 Month)"]},
+            {id:5,price:999,dataLimit:2.5,dataUnit:"GB/Day",validity:84,benefits:["Unlimited Calling","100 SMS/Day"],description:"Premium data package for heavy users",specialOffer:"Extra 500MB data/day for first 7 days",category:"popular",ott:["Disney+ Hotstar (3 Months)","Amazon Prime (3 Months)"]}
+        ];
+        const e={
+            phoneNumber:document.getElementById('phoneNumber'),
+            operatorDisplay:document.getElementById('operatorDisplay'),
+            plansContainer:document.getElementById('plansContainer'),
+            filterPanel:document.getElementById('filterPanel'),
+            filterOverlay:document.getElementById('filterOverlay'),
+            filterIcon:document.querySelector('.filter-icon'),
+            closeFilter:document.getElementById('closeFilter'),
+            searchPlans:document.getElementById('searchPlans'),
+            categoryTabs:document.querySelectorAll('.category-tab'),
+            noResults:document.getElementById('noResults'),
+            sortOptions:document.getElementById('sortOptions'),
+            dataOptions:document.querySelectorAll('.data-option'),
+            validityOptions:document.querySelectorAll('.validity-option'),
+            priceRange:document.getElementById('priceRange'),
+            priceRangeLabel:document.getElementById('priceRangeLabel'),
+            specialOffersToggle:document.getElementById('specialOffersToggle'),
+            applyFilters:document.getElementById('applyFilters'),
+            resetFilters:document.getElementById('resetFilters'),
+            promoCode:document.getElementById('promoCode'),
+            applyPromo:document.getElementById('applyPromo'),
+            couponChips:document.querySelectorAll('.coupon-chip'),
+            discountAlert:document.getElementById('discountAlert'),
+            stickyFooter:document.getElementById('stickyFooter'),
+            selectedPlanName:document.getElementById('selectedPlanName'),
+            selectedPlanPrice:document.getElementById('selectedPlanPrice'),
+            checkoutBtn:document.getElementById('checkoutBtn'),
+            newMobileNumber:document.getElementById('newMobileNumber'),
+            saveNumber:document.getElementById('saveNumber'),
+            modalPlanPrice:document.getElementById('modalPlanPrice'),
+            modalPlanData:document.getElementById('modalPlanData'),
+            modalPlanBenefits:document.getElementById('modalPlanBenefits'),
+            modalPlanValidity:document.getElementById('modalPlanValidity'),
+            modalPlanDescription:document.getElementById('modalPlanDescription'),
+            modalSpecialOffer:document.getElementById('modalSpecialOffer'),
+            modalSelectPlan:document.getElementById('modalSelectPlan')
+        };
+        let currentCategory='popular',selectedPlan=null,currentDiscount=0,filteredPlans=plansData.filter(p=>p.category===currentCategory);
+        let activeFilters={dataLimits:[],maxPrice:3000,validities:[],specialOffersOnly:false};
+        const detailsModal=new bootstrap.Modal(document.getElementById('planDetailsModal'));
+        e.phoneNumber.textContent=localStorage.getItem('mobileNumber')||'Not Set';
+        e.operatorDisplay.textContent='RechargeFlow';
+        renderPlans(filteredPlans);
+        e.categoryTabs.forEach(t=>t.addEventListener('click',function(){e.categoryTabs.forEach(tab=>tab.classList.remove('active'));this.classList.add('active');currentCategory=this.getAttribute('data-category');e.searchPlans.value='';resetAllFilters();filteredPlans=plansData.filter(p=>p.category===currentCategory);renderPlans(filteredPlans)}));
+        e.filterIcon.addEventListener('click',()=>{e.filterPanel.classList.add('open');e.filterOverlay.classList.add('open')});
+        e.closeFilter.addEventListener('click',()=>{e.filterPanel.classList.remove('open');e.filterOverlay.classList.remove('open')});
+        e.filterOverlay.addEventListener('click',()=>{e.filterPanel.classList.remove('open');e.filterOverlay.classList.remove('open')});
+        e.searchPlans.addEventListener('input',applyFiltersAndSearch);
+        e.dataOptions.forEach(o=>o.addEventListener('click',function(){this.classList.toggle('selected');const v=this.getAttribute('data-value'),i=activeFilters.dataLimits.indexOf(v);i===-1?activeFilters.dataLimits.push(v):activeFilters.dataLimits.splice(i,1)}));
+        e.validityOptions.forEach(o=>o.addEventListener('click',function(){this.classList.toggle('selected');const v=parseInt(this.getAttribute('data-value')),i=activeFilters.validities.indexOf(v);i===-1?activeFilters.validities.push(v):activeFilters.validities.splice(i,1)}));
+        e.priceRange.addEventListener('input',function(){e.priceRangeLabel.textContent=`₹0 - ₹${this.value}`;activeFilters.maxPrice=parseInt(this.value)});
+        e.specialOffersToggle.addEventListener('change',function(){activeFilters.specialOffersOnly=this.checked});
+        e.applyFilters.addEventListener('click',()=>{e.filterPanel.classList.remove('open');e.filterOverlay.classList.remove('open');applyFiltersAndSearch()});
+        e.resetFilters.addEventListener('click',()=>{resetAllFilters();e.dataOptions.forEach(o=>o.classList.remove('selected'));e.validityOptions.forEach(o=>o.classList.remove('selected'));e.priceRange.value=3000;e.priceRangeLabel.textContent='₹0 - ₹3000';e.specialOffersToggle.checked=false});
+        e.sortOptions.addEventListener('change',applyFiltersAndSearch);
+        e.couponChips.forEach(c=>c.addEventListener('click',function(){e.promoCode.value=this.getAttribute('data-code');applyPromoCode()}));
+        e.applyPromo.addEventListener('click',applyPromoCode);
+        e.saveNumber.addEventListener('click',()=>{
+            const n=e.newMobileNumber.value.trim();
+            if(n.length===10&&/^\d+$/.test(n)){
+                localStorage.setItem('mobileNumber',n);
+                e.phoneNumber.textContent=n;
+                bootstrap.Modal.getInstance(document.getElementById('changeNumberModal')).hide();
+                e.newMobileNumber.value='';
+            }else{alert('Please enter a valid 10-digit mobile number')}
+        });
+        e.checkoutBtn.addEventListener('click',()=>{
+            if(selectedPlan){
+                const planDetails={
+                    price:Math.max(0,selectedPlan.price-currentDiscount),
+                    planDetails:`✔ Unlimited Calls <br>✔ ${selectedPlan.dataLimit} ${selectedPlan.dataUnit}/Day Data <br>✔ 100 SMS/Day <br>✔ ${selectedPlan.validity} Days Validity`,
+                    additionalDetails:selectedPlan.specialOffer?`Special Offer: ${selectedPlan.specialOffer}`:'',
+                    phoneNumber:e.phoneNumber.textContent
+                };
+                localStorage.setItem('selectedPlan',JSON.stringify(planDetails));
+                window.location.href='recharge.html';
+            }
+        });
+        function applyPromoCode(){
+            const c=e.promoCode.value.trim().toUpperCase();
+            if(!c){showDiscountAlert('Please enter a promo code','danger');return}
+            let d=0,m='';
+            if(c==='SAVE50'){d=50;m='Coupon applied! ₹50 discount added.'}
+            else if(c==='NEW100'){d=100;m='Coupon applied! ₹100 discount added.'}
+            else if(c==='EXTRA20'){
+                if(selectedPlan){d=Math.round(selectedPlan.price*.2);m=`Coupon applied! 20% discount (₹${d}) added.`}
+                else{m='Please select a plan first.';showDiscountAlert(m,'warning');return}
+            }else{m='Invalid promo code.';showDiscountAlert(m,'danger');return}
+            currentDiscount=d;showDiscountAlert(m,'success');
+            if(selectedPlan)updateSelectedPlanDisplay();
+        }
+        function showDiscountAlert(m,t){
+            e.discountAlert.textContent=m;e.discountAlert.className=`alert alert-${t} discount-alert`;
+            e.discountAlert.style.display='block';setTimeout(()=>{e.discountAlert.style.display='none'},3000);
+        }
+        function applyFiltersAndSearch(){
+            const s=e.searchPlans.value.toLowerCase();
+            filteredPlans=plansData.filter(p=>p.category===currentCategory&&(!s||matchesSearchTerm(p,s))&&
+                (!activeFilters.dataLimits.length||activeFilters.dataLimits.some(l=>l===p.dataLimit.toString()||(l==='unlimited'&&p.dataLimit==='unlimited')))&&
+                p.price<=activeFilters.maxPrice&&(!activeFilters.validities.length||activeFilters.validities.includes(p.validity))&&
+                (!activeFilters.specialOffersOnly||p.specialOffer));
+            sortPlans();renderPlans(filteredPlans);
+        }
+        function matchesSearchTerm(p,t){
+            return[p.price,p.dataLimit,p.validity].some(v=>v.toString().includes(t))||
+                [p.dataUnit,p.description,p.specialOffer].some(s=>s.toLowerCase().includes(t))||
+                p.benefits.some(b=>b.toLowerCase().includes(t))||p.ott.some(o=>o.toLowerCase().includes(t));
+        }
+        function sortPlans(){
+            const s=e.sortOptions.value;
+            filteredPlans.sort((a,b)=>
+                s==='price-low'?a.price-b.price:
+                    s==='price-high'?b.price-a.price:
+                        s==='data-low'?(a.dataLimit==='unlimited'?1:b.dataLimit==='unlimited'?-1:a.dataLimit-b.dataLimit):
+                            s==='data-high'?(a.dataLimit==='unlimited'?-1:b.dataLimit==='unlimited'?1:b.dataLimit-a.dataLimit):
+                                s==='validity-low'?a.validity-b.validity:b.validity-a.validity);
+        }
+        function renderPlans(plans){
+            e.plansContainer.innerHTML='';e.noResults.style.display=plans.length?'none':'block';
+            plans.forEach(p=>e.plansContainer.appendChild(createPlanCard(p)));
+        }
+        function createPlanCard(p){
+            const col=document.createElement('div');col.className='col-md-4 mb-4';
+            const d=p.dataLimit==='unlimited'?'Unlimited Data':p.dataLimit>0?`${p.dataLimit} ${p.dataUnit}/Day`:'No Data';
+            const so=p.specialOffer?`<div class="special-offer">${p.specialOffer}</div>`:'';
+            col.innerHTML=`<div class="card plan-card"><div class="card-body"><div class="plan-price">₹${p.price}</div><div class="plan-validity">${p.validity} Days<br>Validity</div><div class="plan-data mt-3">${d}</div><div class="plan-benefits">${p.benefits.map(b=>`<div class="benefit-item"><i class="fas fa-check-circle text-success me-2"></i>${b}</div>`).join('')}<p class="mt-2">${p.description}</p>${so}</div><button class="select-plan-btn" data-plan-id="${p.id}">Select Plan</button><a href="#" class="text-primary small position-absolute top-0 end-0 me-3 mt-3 view-details" data-plan-id="${p.id}">View Details</a></div></div>`;
+            col.querySelector('.select-plan-btn').addEventListener('click',()=>selectPlan(p.id));
+            col.querySelector('.view-details').addEventListener('click',e=>{e.preventDefault();showPlanDetails(p)});
+            return col;
+        }
+        function selectPlan(id){
+            selectedPlan=plansData.find(p=>p.id===id);
+            if(!selectedPlan)return;
+            updateSelectedPlanDisplay();
+            e.checkoutBtn.disabled=false;
+            e.stickyFooter.classList.add('active');
+            document.querySelectorAll('.plan-card').forEach(c=>{const cid=parseInt(c.querySelector('.select-plan-btn').getAttribute('data-plan-id'));c.style.borderColor=cid===id?'#5862d6':'';c.style.boxShadow=cid===id?'0 0 10px rgba(88,86,214,.3)':''});
+        }
+        function updateSelectedPlanDisplay(){
+            if(!selectedPlan)return;
+            const d=selectedPlan.dataLimit==='unlimited'?'Unlimited':selectedPlan.dataLimit>0?`${selectedPlan.dataLimit} ${selectedPlan.dataUnit}`:'No Data';
+            e.selectedPlanName.textContent=`${d} - ${selectedPlan.validity} Days`;
+            e.selectedPlanPrice.textContent=Math.max(0,selectedPlan.price-currentDiscount);
+        }
+        function showPlanDetails(p){
+            e.modalPlanPrice.textContent=`₹${p.price}`;
+            e.modalPlanData.textContent=p.dataLimit==='unlimited'?'Unlimited Data':p.dataLimit>0?`${p.dataLimit} ${p.dataUnit}/Day`:'No Data';
+            e.modalPlanBenefits.innerHTML=p.benefits.map(b=>`<li>${b}</li>`).join('');
+            e.modalPlanValidity.textContent=`Validity: ${p.validity} Days`;
+            e.modalPlanDescription.textContent=p.description;
+            e.modalSpecialOffer.textContent=p.specialOffer?`Special Offer: ${p.specialOffer}`:'No special offer';
+            e.modalSelectPlan.onclick=()=>{selectPlan(p.id);detailsModal.hide()};
+            detailsModal.show();
+        }
+        function resetAllFilters(){
+            activeFilters={dataLimits:[],maxPrice:3000,validities:[],specialOffersOnly:false};
+            filteredPlans=plansData.filter(p=>p.category===currentCategory);
+            renderPlans(filteredPlans);
+        }
+    });
+    document.getElementById("loginBtn").addEventListener("click",()=>{
+       window.location.href="login.html";
+    });
+</script>
+<script src="../js/script.js"></script>
+</body>
+</html>
