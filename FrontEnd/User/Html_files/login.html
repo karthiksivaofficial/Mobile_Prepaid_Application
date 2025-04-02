@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickCharge - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{--primary-color:#5856d6;--secondary-color:#e9ecef;--accent-color:#ff9500;--text-dark:#343a40;--text-light:#6c757d}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8f9fa;color:var(--text-dark)}
+    .login-container{background:#fff;border-radius:10px;padding:30px;box-shadow:0 2px 10px rgba(0,0,0,0.05);max-width:400px;margin:50px auto;text-align:center}
+    .login-container h2{font-size:1.5rem;font-weight:700;color:var(--primary-color);margin-bottom:20px}
+    .form-control{border-radius:5px;border:1px solid #ced4da;padding:10px 15px;transition:all .3s ease}
+    .form-control:focus{border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(88,86,214,0.2)}
+    .btn-primary{background:var(--primary-color);border:none;border-radius:20px;padding:10px 20px;width:100%;transition:all .3s ease}
+    .btn-primary:hover{background:#4a49be}
+    .otp-container{display:flex;justify-content:center;gap:10px;margin-bottom:20px}
+    .otp-input{width:40px;height:40px;text-align:center;font-size:20px;border:1px solid #ced4da;border-radius:5px;transition:all .3s ease}
+    .otp-input:focus{border-color:var(--primary-color);box-shadow:0 0 5px rgba(88,86,214,0.5)}
+    .modal-body{text-align:center}
+    .modal-footer{display:flex;justify-content:space-between;gap:10px}
+    #timer{font-weight:700}
+    #resendOtp{margin-top:10px;font-size:14px}
+    #message{color:#dc3545;font-size:14px;margin-top:10px}
+  </style>
+</head>
+<body>
+<div class="login-container">
+  <h2>Login</h2>
+  <div class="mb-3">
+    <input type="tel" id="phone" class="form-control" placeholder="Enter mobile number (e.g., 91XXXXXXXXXX)" maxlength="12">
+  </div>
+  <button id="send-otp-btn" class="btn btn-primary">Send OTP</button>
+  <p id="message"></p>
+
+  <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="otpModalLabel">Enter OTP</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>A 6-digit OTP has been sent to your mobile number.</p>
+          <div class="otp-container">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+          </div>
+          <p class="mt-3"><span id="timer">01:00</span> before you can resend OTP.</p>
+          <button class="btn btn-link" id="resendOtp" disabled>Resend OTP</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="submitOtp">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="userNotFoundModal" tabindex="-1" aria-labelledby="userNotFoundModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="userNotFoundModalLabel">User Not Found</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          The entered phone number was not found. Please try again or register.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="window.location.href='register.html'">Register</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const sendOtpBtn = document.getElementById("send-otp-btn");
+    const otpModal = new bootstrap.Modal(document.getElementById("otpModal"));
+    const userNotFoundModal = new bootstrap.Modal(document.getElementById("userNotFoundModal"));
+    const otpInputs = document.querySelectorAll(".otp-input");
+    const resendOtpBtn = document.getElementById("resendOtp");
+    const timerDisplay = document.getElementById("timer");
+    const phoneInput = document.getElementById("phone");
+    const submitOtpBtn = document.getElementById("submitOtp");
+    const message = document.getElementById("message");
+    const phoneWithout91 = phoneInput.value.slice(2);
+    let timer;
+
+    sendOtpBtn.addEventListener("click", async () => {
+      const mobilePattern = /^91[0-9]{10}$/; // 12-digit with 91 prefix
+      if (!mobilePattern.test(phoneInput.value)) {
+        message.textContent = "Please enter a valid 12-digit mobile number starting with 91";
+        return;
+      }
+      message.textContent = "";
+      try {
+        // Check if user exists
+        const checkResponse = await fetch(`http://localhost:8083/api/getuser?phone=${phoneInput.value}`);
+        if (!checkResponse.ok) {
+          userNotFoundModal.show();
+          message.textContent = "Phone number not found";
+          message.style.color = "#dc3545";
+          return;
+        }
+
+        // Send OTP if user exists
+         // Remove 91 for Twilio
+        console.log(phoneInput.value.slice(2));
+        const response = await fetch('http://localhost:8083/api/otp/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber: `${phoneInput.value.slice(2)}` }) // Send full 12-digit to backend
+        });
+        const data = await response.json();
+        console.log(data);
+        if (response.ok) {
+          otpModal.show();
+          startTimer();
+          clearOtpFields();
+          message.textContent = "OTP sent successfully!";
+          message.style.color = "#28a745";
+        } else {
+          message.textContent = data.error || "Failed to send OTP";
+          message.style.color = "#dc3545";
+        }
+      } catch (error) {
+        console.error('Error sending OTP:', error);
+        message.textContent = "Network error occurred";
+        message.style.color = "#dc3545";
+      }
+    });
+
+    otpInputs.forEach((input, index) => {
+      input.addEventListener("input", function() {
+        this.value = this.value.replace(/\D/g, '');
+        if (this.value && index < otpInputs.length - 1) {
+          otpInputs[index + 1].focus();
+        }
+      });
+      input.addEventListener("keydown", function(event) {
+        if (event.key === "Backspace" && !this.value && index > 0) {
+          otpInputs[index - 1].focus();
+        }
+      });
+    });
+
+    submitOtpBtn.addEventListener("click", async () => {
+      const otp = Array.from(otpInputs).map(i => i.value).join('');
+      if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+        message.textContent = "Please enter a valid 6-digit OTP";
+        return;
+      }
+      try {
+        const response = await fetch('http://localhost:8083/api/otp/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber: `${phoneInput.value.slice(2)}`, otp }) // Full 12-digit
+        });
+        const data = await response.json();
+        if (response.ok) {
+          console.log('Access Token:', data.accessToken);
+          console.log('Refresh Token:', data.refreshToken);
+          sessionStorage.setItem('accessToken', data.accessToken);
+          sessionStorage.setItem('refreshToken', data.refreshToken);
+          sessionStorage.setItem('mobileNumber', phoneInput.value);
+          message.textContent = "OTP verified successfully!";
+          message.style.color = "#28a745";
+          otpModal.hide();
+          setTimeout(() => { window.location.href = "index.html"; }, 1000);
+        } else {
+          message.textContent = data.error || "Invalid OTP";
+          message.style.color = "#dc3545";
+        }
+      } catch (error) {
+        console.error('Error verifying OTP:', error);
+        message.textContent = "Network error occurred";
+        message.style.color = "#dc3545";
+      }
+    });
+
+    resendOtpBtn.addEventListener("click", async () => {
+      if (!resendOtpBtn.disabled) {
+        try {
+          const response = await fetch('http://localhost:8083/api/otp/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNumber: `${phoneInput.value.slice(2)}` }) // Full 12-digit
+          });
+          const data = await response.json();
+          if (response.ok) {
+            startTimer();
+            clearOtpFields();
+            message.textContent = "OTP resent successfully!";
+            message.style.color = "#28a745";
+          } else {
+            message.textContent = data.error || "Failed to resend OTP";
+            message.style.color = "#dc3545";
+          }
+        } catch (error) {
+          console.error('Error resending OTP:', error);
+          message.textContent = "Network error occurred";
+          message.style.color = "#dc3545";
+        }
+      }
+    });
+
+    function startTimer() {
+      clearInterval(timer);
+      let timeLeft = 60;
+      resendOtpBtn.disabled = true;
+      resendOtpBtn.style.color = "gray";
+      updateTimerDisplay(timeLeft);
+      timer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay(timeLeft);
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          resendOtpBtn.disabled = false;
+          resendOtpBtn.style.color = "blue";
+          timerDisplay.textContent = "You can now resend OTP.";
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay(seconds) {
+      let mins = Math.floor(seconds / 60);
+      let secs = seconds % 60;
+      timerDisplay.textContent = `0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function clearOtpFields() {
+      otpInputs.forEach(i => i.value = "");
+      otpInputs[0].focus();
+    }
+  });
+</script>
+</body>
+</html>

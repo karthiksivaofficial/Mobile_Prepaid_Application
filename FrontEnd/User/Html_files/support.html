@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f5f7ff;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            padding-bottom: 40px;
+        }
+
+        .support-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            max-width: 800px;
+            margin: 40px auto;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .support-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            font-size: 22px;
+            color: #4a6fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-button:hover {
+            color: #3451db;
+            transform: translateX(-3px);
+            text-decoration: none;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4a6fff;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e6eeff;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #4a6fff;
+            box-shadow: 0 0 0 3px rgba(74, 111, 255, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #4a6fff, #3451db);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(74, 111, 255, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #3451db, #2a43c2);
+            box-shadow: 0 6px 15px rgba(74, 111, 255, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .support-card {
+            background: linear-gradient(to right, #f0f4ff, #e6eeff);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #4a6fff;
+        }
+
+        .support-card:hover {
+            box-shadow: 0 4px 15px rgba(74, 111, 255, 0.1);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .nav-item {
+            margin-bottom: -2px;
+        }
+
+        .nav-tabs .nav-link {
+            color: #4a6fff;
+            font-weight: 600;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: rgba(74, 111, 255, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #3451db;
+            background-color: transparent;
+            border-bottom: 3px solid #3451db;
+        }
+
+        #response-message {
+            background: linear-gradient(to right, #eefff0, #e6ffee);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #28a745;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .ticket-id {
+            font-size: 18px;
+            font-weight: 600;
+            color: #3451db;
+            background: #e6eeff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .copy-btn {
+            background: #4a6fff;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #3451db;
+        }
+
+        .live-chat-box {
+            border: 1px solid #e6eeff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            background: #f9faff;
+        }
+
+        .live-chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e6eeff;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            padding: 8px 12px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            word-break: break-word;
+        }
+
+        .user-message {
+            background: linear-gradient(to right, #4a6fff, #3451db);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .support-message {
+            background: #e6eeff;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ticket-status-box {
+            background: linear-gradient(to right, #f0f4ff, #e6eeff);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease-out;
+            border-left: 4px solid #4a6fff;
+        }
+
+        .status-label {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-open {
+            background: #e6f7ff;
+            color: #0290ff;
+        }
+
+        .status-progress {
+            background: #fff8e6;
+            color: #ffa200;
+        }
+
+        .status-resolved {
+            background: #e6ffee;
+            color: #28a745;
+        }
+
+        .accordion .card {
+            border: none;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .accordion .card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion .card-header {
+            background: linear-gradient(to right, #f0f4ff, #e6eeff);
+            border: none;
+            padding: 0;
+        }
+
+        .accordion .btn-link {
+            color: #4a6fff;
+            font-weight: 600;
+            text-decoration: none;
+            width: 100%;
+            text-align: left;
+            padding: 15px 20px;
+        }
+
+        .accordion .btn-link:hover {
+            text-decoration: none;
+            color: #3451db;
+        }
+
+        .accordion .card-body {
+            padding: 15px 20px;
+            color: #666;
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .contact-info-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(to right, #f0f4ff, #e6eeff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #4a6fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .support-container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="support-container">
+    <div class="header">
+        <a href="javascript:history.back()" class="back-button">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+        <div>
+            <h3 class="mb-0 font-weight-bold text-primary">Customer Support</h3>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs" id="supportTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="complaint-tab" data-toggle="tab" href="#complaint" role="tab" aria-controls="complaint" aria-selected="true">
+                <i class="fas fa-comment-alt mr-2"></i>Submit Complaint
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="track-tab" data-toggle="tab" href="#track" role="tab" aria-controls="track" aria-selected="false">
+                <i class="fas fa-search mr-2"></i>Track Ticket
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="chat-tab" data-toggle="tab" href="#chat" role="tab" aria-controls="chat" aria-selected="false">
+                <i class="fas fa-headset mr-2"></i>Live Chat
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="faq-tab" data-toggle="tab" href="#faq" role="tab" aria-controls="faq" aria-selected="false">
+                <i class="fas fa-question-circle mr-2"></i>FAQ
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="supportTabContent">
+        <!-- Submit Complaint Tab -->
+        <div class="tab-pane fade show active" id="complaint" role="tabpanel" aria-labelledby="complaint-tab">
+            <form id="support-form">
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user mr-2"></i>Full Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope mr-2"></i>Email Address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email address" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone"><i class="fas fa-phone mr-2"></i>Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="issue-type"><i class="fas fa-tag mr-2"></i>Issue Type</label>
+                    <select class="form-control" id="issue-type" required>
+                        <option value="">Select issue type</option>
+                        <option value="recharge">Recharge Issue</option>
+                        <option value="payment">Payment Problem</option>
+                        <option value="account">Account Related</option>
+                        <option value="service">Service Quality</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="complaint"><i class="fas fa-edit mr-2"></i>Complaint Details</label>
+                    <textarea class="form-control" id="complaint" rows="4" placeholder="Describe your issue in detail" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane mr-2"></i> Submit Complaint
+                </button>
+            </form>
+
+            <div id="response-message" class="mt-4" style="display:none;">
+                <h5><i class="fas fa-check-circle mr-2 text-success"></i>Your complaint has been submitted successfully!</h5>
+                <p>We've received your complaint and our team will review it shortly. You'll receive updates via email.</p>
+                <div class="text-center">
+                    <p>Your Ticket ID:</p>
+                    <span id="ticket-id" class="ticket-id">TKT123456</span>
+                    <div>
+                        <button class="copy-btn mt-2" onclick="copyTicketId()">
+                            <i class="fas fa-copy mr-1"></i> Copy Ticket ID
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Track Ticket Tab -->
+        <div class="tab-pane fade" id="track" role="tabpanel" aria-labelledby="track-tab">
+            <div class="support-card">
+                <p><i class="fas fa-info-circle mr-2"></i>Enter your ticket ID below to check the status of your support request.</p>
+            </div>
+
+            <form id="ticket-form">
+                <div class="form-group">
+                    <label for="ticket-id-input"><i class="fas fa-ticket-alt mr-2"></i>Ticket ID</label>
+                    <input type="text" class="form-control" id="ticket-id-input" placeholder="Enter your ticket ID (e.g., TKT123456)" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search mr-2"></i> Track Ticket
+                </button>
+            </form>
+
+            <div id="ticket-status" class="ticket-status-box" style="display:none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Ticket Details</h5>
+                    <span class="status-label status-progress" id="status-badge">In Progress</span>
+                </div>
+
+                <div class="ticket-details-container">
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Ticket ID:</div>
+                        <div class="col-md-8 font-weight-medium" id="detail-ticket-id">TKT123456</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Created On:</div>
+                        <div class="col-md-8 font-weight-medium" id="detail-created">Feb 24, 2025, 10:30 AM</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Last Updated:</div>
+                        <div class="col-md-8 font-weight-medium" id="detail-updated">Feb 25, 2025, 09:15 AM</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Issue Type:</div>
+                        <div class="col-md-8 font-weight-medium" id="detail-type">Recharge Issue</div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-muted">Status:</div>
+                        <div class="col-md-8 font-weight-medium" id="detail-status">Our team is currently working on your issue</div>
+                    </div>
+                </div>
+
+                <div class="timeline mt-4">
+                    <h6 class="mb-3"><i class="fas fa-history mr-2"></i>Ticket Timeline</h6>
+                    <div class="timeline-item d-flex mb-3">
+                        <div class="timeline-dot bg-primary mr-3 mt-1"></div>
+                        <div>
+                            <div class="font-weight-medium">Ticket Created</div>
+                            <div class="text-muted small">Feb 24, 2025, 10:30 AM</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item d-flex">
+                        <div class="timeline-dot bg-primary mr-3 mt-1"></div>
+                        <div>
+                            <div class="font-weight-medium">Assigned to Support Agent</div>
+                            <div class="text-muted small">Feb 25, 2025, 09:15 AM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Chat Tab -->
+        <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="chat-tab">
+            <div class="support-card">
+                <p><i class="fas fa-headset mr-2"></i>Connect with our support team instantly via live chat for quick assistance.</p>
+            </div>
+
+            <button class="btn btn-primary" id="start-chat-btn" onclick="toggleChat()">
+                <i class="fas fa-comments mr-2"></i> Start Live Chat
+            </button>
+
+            <div id="live-chat-box" class="live-chat-box" style="display:none;">
+                <div class="mb-3">
+                    <h5><i class="fas fa-headset mr-2"></i>Support Chat</h5>
+                    <p class="text-muted small">You're connected with our support team</p>
+                </div>
+
+                <div class="live-chat-messages" id="chat-messages">
+                    <div class="message support-message">
+                        <div>Hello! How can I help you today?</div>
+                        <div class="text-right text-muted small">09:30 AM</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" class="form-control" id="chat-input" placeholder="Type your message..." aria-label="Type your message">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Tab -->
+        <div class="tab-pane fade" id="faq" role="tabpanel" aria-labelledby="faq-tab">
+            <div class="support-card mb-4">
+                <p><i class="fas fa-info-circle mr-2"></i>Find answers to commonly asked questions below.</p>
+            </div>
+
+            <div class="accordion" id="faqAccordion">
+                <div class="card">
+                    <div class="card-header" id="faqOne">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                <i class="fas fa-question-circle mr-2"></i> What are the operating hours for customer support?
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="collapseOne" class="collapse" aria-labelledby="faqOne" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            Our customer support team is available 24/7 to assist you with any issues or queries. We're committed to providing timely assistance no matter when you need help.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="faqTwo">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <i class="fas fa-question-circle mr-2"></i> How long does it take to resolve a complaint?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="faqTwo" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            We strive to resolve all complaints within 24-48 hours. Complex issues may take longer, but rest assured that our team will keep you updated throughout the resolution process. You can always check the status of your complaint using your ticket ID.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="faqThree">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <i class="fas fa-question-circle mr-2"></i> How can I track my complaint status?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="faqThree" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            You can track your complaint status by switching to the "Track Ticket" tab and entering your ticket ID. The system will display real-time updates on the status of your complaint, including when it was created, last updated, and the current stage of resolution.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="faqFour">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <i class="fas fa-question-circle mr-2"></i> How do I get a refund for a failed transaction?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseFour" class="collapse" aria-labelledby="faqFour" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            For refunds related to failed transactions, please submit a complaint with the transaction details including date, amount, and payment method. Our team will verify the transaction and process the refund within 5-7 business days, depending on your bank's policies.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="faqFive">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                <i class="fas fa-question-circle mr-2"></i> Can I change or update my existing complaint?
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseFive" class="collapse" aria-labelledby="faqFive" data-parent="#faqAccordion">
+                        <div class="card-body">
+                            Yes, you can update your existing complaint by using the live chat feature or by responding to the confirmation email you received. Please make sure to include your ticket ID for quick reference.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="support-card mt-4">
+                <h5 class="mb-3"><i class="fas fa-phone-alt mr-2"></i>Contact Us Directly</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="contact-info">
+                            <div class="contact-info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Email Support</h6>
+                                <p class="mb-0">support@example.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="contact-info">
+                            <div class="contact-info-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Phone Support</h6>
+                                <p class="mb-0">1-800-123-4567</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    // Form submission handling
+    document.getElementById('support-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate form
+        let isValid = true;
+        const requiredFields = this.querySelectorAll('[required]');
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (isValid) {
+            // Generate random ticket ID
+            const ticketId = 'TKT' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('ticket-id').textContent = ticketId;
+
+            // Show success message
+            document.getElementById('response-message').style.display = 'block';
+
+            // Scroll to response message
+            document.getElementById('response-message').scrollIntoView({ behavior: 'smooth' });
+
+            // Reset form
+            this.reset();
+        }
+    });
+
+    // Ticket tracking form handling
+    document.getElementById('ticket-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const ticketInput = document.getElementById('ticket-id-input');
+
+        if (ticketInput.value.trim()) {
+            // Show ticket status
+            document.getElementById('ticket-status').style.display = 'block';
+            document.getElementById('detail-ticket-id').textContent = ticketInput.value.trim();
+
+            // Scroll to ticket status
+            document.getElementById('ticket-status').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            ticketInput.classList.add('is-invalid');
+        }
+    });
+
+    // Live chat functionality
+    function toggleChat() {
+        const chatBox = document.getElementById('live-chat-box');
+        const chatBtn = document.getElementById('start-chat-btn');
+
+        if (chatBox.style.display === 'none') {
+            chatBox.style.display = 'block';
+            chatBtn.innerHTML = '<i class="fas fa-times mr-2"></i> End Chat';
+
+            // Focus on chat input
+            document.getElementById('chat-input').focus();
+        } else {
+            chatBox.style.display = 'none';
+            chatBtn.innerHTML = '<i class="fas fa-comments mr-2"></i> Start Live Chat';
+        }
+    }
+
+    function sendMessage() {
+        const chatInput = document.getElementById('chat-input');
+        const message = chatInput.value.trim();
+
+        if (message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Add user message
+            chatMessages.innerHTML += `
+        <div class="message user-message">
+          <div>${message}</div>
+          <div class="text-right text-muted small">${timeString}</div>
+        </div>
+      `;
+
+            // Clear input
+            chatInput.value = '';
+
+            // Scroll to bottom of chat
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate agent response after a short delay
+            setTimeout(() => {
+                const responses = [
+                    "Thanks for reaching out! I'm checking on that for you now.",
+                    "I understand your concern. Let me help you with that issue.",
+                    "Thank you for providing that information. Is there anything else you'd like to add?",
+                    "I'm looking into this issue for you. It might take a moment to find the right solution.",
+                    "I'm happy to help with your question. Let me check our knowledge base."
+                ];
+
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                const responseTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                chatMessages.innerHTML += `
+          <div class="message support-message">
+            <div>${randomResponse}</div>
+            <div class="text-right text-muted small">${responseTime}</div>
+          </div>
+        `;
+
+                // Scroll to bottom of chat again
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+    }
+
+    // Allow sending messages with Enter key
+    document.getElementById('chat-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // Copy ticket ID functionality
+    function copyTicketId() {
+        const ticketId = document.getElementById('ticket-id').textContent;
+        navigator.clipboard.writeText(ticketId).then(() => {
+            const copyBtn = document.querySelector('.copy-btn');
+            const originalText = copyBtn.innerHTML;
+
+            copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+            }, 2000);
+        });
+    }
+
+    // Add responsive behavior for tab navigation on smaller screens
+    window.addEventListener('resize', function() {
+        const tabs = document.querySelectorAll('.nav-tabs .nav-link');
+
+        if (window.innerWidth < 768) {
+            tabs.forEach(tab => {
+                const icon = tab.querySelector('i');
+                tab.innerHTML = '';
+                tab.appendChild(icon);
+            });
+        } else {
+            tabs.forEach(tab => {
+                const icon = tab.querySelector('i');
+                const text = tab.getAttribute('aria-controls');
+
+                if (text && icon) {
+                    tab.innerHTML = '';
+                    tab.appendChild(icon);
+                    icon.classList.add('mr-2');
+
+                    const textNode = document.createTextNode(text.charAt(0).toUpperCase() + text.slice(1));
+                    tab.appendChild(textNode);
+                }
+            });
+        }
+    });
+
+    // Highlight fields on focus
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+        control.addEventListener('focus', function() {
+            this.parentElement.classList.add('focus');
+        });
+
+        control.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focus');
+        });
+    });
+
+    // Initialize any interactive elements on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simulate loading states
+        const loadingElements = document.querySelectorAll('.support-container, .support-card, .form-control');
+        loadingElements.forEach(element => {
+            element.style.opacity = '0';
+            setTimeout(() => {
+                element.style.transition = 'opacity 0.5s ease';
+                element.style.opacity = '1';
+            }, 100);
+        });
+
+        // Set up ticket status updater
+        const statusBadge = document.getElementById('status-badge');
+        if (statusBadge) {
+            const statuses = ['status-open', 'status-progress', 'status-resolved'];
+            const statusTexts = ['Open', 'In Progress', 'Resolved'];
+
+            setInterval(() => {
+                const currentIndex = statuses.findIndex(status => statusBadge.classList.contains(status));
+                const nextIndex = (currentIndex + 1) % statuses.length;
+
+                statusBadge.classList.remove(...statuses);
+                statusBadge.classList.add(statuses[nextIndex]);
+                statusBadge.textContent = statusTexts[nextIndex];
+            }, 5000);
+        }
+    });
+</script>
+</body>
+</html>

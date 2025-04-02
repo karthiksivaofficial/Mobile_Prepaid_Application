@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RechargeFlow - Payment</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body{background-color:#f5f7ff;color:#333;font-family:'Poppins',sans-serif}
+        .container{background:#fff;padding:25px;border-radius:16px;max-width:420px;margin:50px auto;box-shadow:0 6px 20px rgba(0,0,0,0.08);transition:all .3s ease}
+        .container:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.12)}
+        .plan-details{background:linear-gradient(to right,#f0f4ff,#e6eeff);color:#444;padding:18px;border-radius:12px;font-size:14px;border-left:5px solid #4a6fff;transition:all .3s ease}
+        .plan-details:hover{box-shadow:0 4px 10px rgba(74,111,255,0.1)}
+        .btn-custom{background:linear-gradient(to right,#4a6fff,#3451db);color:#fff;border:none;width:100%;padding:14px;font-size:16px;font-weight:600;border-radius:10px;transition:all .3s ease;box-shadow:0 4px 12px rgba(74,111,255,0.25)}
+        .btn-custom:hover{background:linear-gradient(to right,#3451db,#2a43c2);box-shadow:0 6px 15px rgba(74,111,255,0.35);transform:translateY(-2px)}
+        .back-button{font-size:24px;color:#4a6fff;text-decoration:none;font-weight:700;transition:all .2s ease}
+        .back-button:hover{color:#3451db;transform:translateX(-3px)}
+        .amount-box{background:linear-gradient(to right,#f0f4ff,#e6eeff);padding:18px;border-radius:12px;text-align:center;color:#333;font-weight:700;transition:all .3s ease;border:1px solid rgba(74,111,255,0.1)}
+        .amount-box:hover{box-shadow:0 4px 15px rgba(74,111,255,0.1)}
+        .change-btn{border-radius:8px;padding:8px 18px;color:#4a6fff;border-color:#4a6fff;background:transparent;transition:all .3s ease;font-weight:500}
+        .change-btn:hover{background:#4a6fff;color:#fff;transform:translateY(-2px);box-shadow:0 4px 10px rgba(74,111,255,0.2)}
+        hr{border-top:1px solid #eaeaea}
+        .payment-methods{margin:20px 0}
+        .payment-method-btn{width:100%;margin:5px 0;padding:12px;text-align:left;border-radius:8px;background:linear-gradient(to right,#f0f4ff,#e6eeff);border:none;color:#444;font-weight:500;transition:all .3s ease}
+        .payment-method-btn.active{background:linear-gradient(to right,#4a6fff,#3451db);color:#fff}
+        .payment-method-btn:hover{background:linear-gradient(to right,#e6eeff,#f0f4ff);box-shadow:0 4px 10px rgba(74,111,255,0.1)}
+        #card-element,.form-control{margin:10px 0;padding:10px;border:1px solid #ced4da;border-radius:8px;font-size:14px}
+        #payment-message{font-size:14px;margin-top:15px}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+            <a href="plans.html" class="back-button mr-2">←</a>
+            <div class="heading-wrapper">
+                <span class="h5 mb-0 font-weight-bold">Payment</span>
+                <br/>
+                <span id="phone-number" class="mt-1 ml-2 text-secondary"></span>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="amount-box mb-3">
+        <p class="mb-1 text-muted">Amount</p>
+        <p class="h3 font-weight-bold text-primary" id="amount">₹0</p>
+    </div>
+    <div class="plan-details mb-4" id="plan-details"></div>
+    <div class="payment-methods">
+        <button class="payment-method-btn" data-method="card">Card</button>
+        <button class="payment-method-btn" data-method="upi">UPI</button>
+        <button class="payment-method-btn" data-method="netbanking">Net Banking</button>
+    </div>
+    <div id="card-section" class="payment-section" style="display:none;">
+        <div id="card-element"></div>
+    </div>
+    <div id="upi-section" class="payment-section" style="display:none;">
+        <input type="text" class="form-control upi-input" id="upi-id" placeholder="Enter UPI ID (e.g., name@upi)">
+    </div>
+    <div id="netbanking-section" class="payment-section" style="display:none;">
+        <select class="form-control netbanking-input" id="bank-select">
+            <option value="">Select Bank</option>
+            <option value="HDFC">HDFC Bank</option>
+            <option value="ICICI">ICICI Bank</option>
+            <option value="SBI">State Bank of India</option>
+        </select>
+    </div>
+    <button class="btn btn-custom" id="payButton">
+        <i class="fas fa-check-circle mr-2"></i> Pay Now
+    </button>
+    <div id="payment-message" class="text-center"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const stripe = Stripe('pk_test_51R4yf8Dw8ZEpskb5ZgRpssKFwM0Scf3xcvwcGyFX59TvRnsQh1zZIXYbjZOkAgs8wrLMMq2kdBmpjnZn2aq5DbGj00Q620QJnt');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '14px',
+                color: '#333',
+                fontFamily: "'Poppins', sans-serif",
+                '::placeholder': { color: '#666' }
+            }
+        },
+        hidePostalCode: false,
+        postalCode: {
+            maxlength: 6,
+            placeholder: 'Enter 6-digit PIN code'
+        }
+    });
+    cardElement.mount('#card-element');
+
+    const planDetails = JSON.parse(sessionStorage.getItem('selectedPlan') || '{}');
+    const tempPaymentData = JSON.parse(sessionStorage.getItem('tempPaymentData') || '{}');
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const accessToken = sessionStorage.getItem('accessToken');
+        if (!accessToken) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const headers = {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        };
+
+        async function fetchWithAuth(url, options = {}) {
+            options.headers = { ...headers, ...options.headers };
+            const response = await fetch(url, options);
+            if (response.status === 401) {
+                sessionStorage.removeItem('accessToken');
+                sessionStorage.removeItem('mobileNumber');
+                sessionStorage.removeItem('selectedPlan');
+                sessionStorage.removeItem('tempPaymentData');
+                window.location.href = 'login.html';
+                return null;
+            }
+            return response;
+        }
+
+        document.getElementById('amount').textContent = `₹${planDetails.price || 0}`;
+        document.getElementById('plan-details').innerHTML = `
+            <p class="mb-1 font-weight-bold"><i class="fas fa-info-circle mr-2"></i>Plan Details:</p>
+            <small>${planDetails.planDetails || ''}<br>${planDetails.additionalDetails || ''}</small>`;
+        document.getElementById('phone-number').innerHTML = `<i class="fas fa-phone-alt mr-1"></i> ${planDetails.phoneNumber || ''}`;
+
+        let selectedMethod = 'card';
+        const methodButtons = document.querySelectorAll('.payment-method-btn');
+        const sections = {
+            card: document.getElementById('card-section'),
+            upi: document.getElementById('upi-section'),
+            netbanking: document.getElementById('netbanking-section')
+        };
+
+        methodButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                methodButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedMethod = btn.dataset.method;
+                Object.values(sections).forEach(s => s.style.display = 'none');
+                sections[selectedMethod].style.display = 'block';
+            });
+        });
+        methodButtons[0].click();
+
+        document.getElementById('payButton').addEventListener('click', async () => {
+            const messageDiv = document.getElementById('payment-message');
+            messageDiv.textContent = 'Processing payment...';
+            animateButton(document.getElementById('payButton'));
+
+            try {
+                if (!tempPaymentData || !planDetails) {
+                    throw new Error('No payment data found. Please select a plan again.');
+                }
+
+                const response = await fetchWithAuth('http://localhost:8083/api/payments/create-payment-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tempPaymentData)
+                });
+
+                if (!response) {
+                    throw new Error('Authentication failed');
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                }
+
+                const result = await response.json();
+
+                if (result.error) {
+                    messageDiv.textContent = result.error;
+                    return;
+                }
+
+                const clientSecret = result.clientSecret;
+                let paymentResult;
+
+                if (selectedMethod === 'card') {
+                    paymentResult = await stripe.confirmCardPayment(clientSecret, {
+                        payment_method: { card: cardElement }
+                    });
+                } else if (selectedMethod === 'upi') {
+                    messageDiv.textContent = 'UPI not supported yet';
+                    return;
+                } else {
+                    messageDiv.textContent = 'Net Banking not supported yet';
+                    return;
+                }
+
+                if (paymentResult.error) {
+                    messageDiv.textContent = paymentResult.error.message;
+                } else if (paymentResult.paymentIntent.status === 'succeeded') {
+                    const confirmResponse = await fetchWithAuth('http://localhost:8083/api/payments/confirm-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            phoneNumber: tempPaymentData.phoneNumber,
+                            planId: tempPaymentData.planId,
+                            amount: tempPaymentData.amount,
+                            discountAmount: tempPaymentData.discountAmount,
+                            paymentMethod: selectedMethod.toUpperCase(),
+                            paymentReference: 'REF' + Date.now(),
+                            gatewayTransactionId: paymentResult.paymentIntent.id
+                        })
+                    });
+
+                    if (!confirmResponse) {
+                        throw new Error('Authentication failed during confirmation');
+                    }
+
+                    const confirmResult = await confirmResponse.json();
+
+                    if (confirmResult.error) {
+                        messageDiv.textContent = confirmResult.error;
+                    } else {
+                        messageDiv.textContent = 'Payment successful!';
+                        sessionStorage.setItem('transactionDetails', JSON.stringify({
+                            amount: tempPaymentData.amount,
+                            transactionId: paymentResult.paymentIntent.id,
+                            date: new Date().toLocaleString(),
+                            phoneNumber: planDetails.phoneNumber,
+                            planDetails: planDetails.planDetails,
+                            additionalDetails: planDetails.additionalDetails,
+                            validity: planDetails.validity
+                        }));
+                        sessionStorage.removeItem('selectedPlan');
+                        sessionStorage.removeItem('tempPaymentData');
+                        setTimeout(() => window.location.href = 'success.html', 2000);
+                    }
+                }
+            } catch (error) {
+                messageDiv.textContent = `Payment failed: ${error.message}`;
+                console.error('Payment error:', error);
+            }
+        });
+    });
+
+    function animateButton(button) {
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => { button.style.transform = 'scale(1)'; }, 150);
+    }
+</script>
+</body>
+</html>

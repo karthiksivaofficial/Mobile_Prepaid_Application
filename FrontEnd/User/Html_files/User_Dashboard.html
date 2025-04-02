@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="../css/Dashboard_style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    #usageChart {
+      max-width: 600px;
+      max-height: 400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <button class="close-btn" id="close-btn">×</button>
+  <div class="sidebar-header">
+    <h4 class="text-center">Customer Panel</h4>
+  </div>
+  <a href="#" id="dashboard-link" class="active"><i class="fas fa-home"></i> Dashboard</a>
+  <a href="#" id="recharge-history-link"><i class="fas fa-history"></i> Recharge History</a>
+  <a href="#" id="autopay-management-link"><i class="fas fa-credit-card"></i> AutoPay Management</a>
+  <a href="#" id="saved-payment-link"><i class="fas fa-wallet"></i> Saved Payment Methods</a>
+  <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<div class="content">
+  <div class="top-bar">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-bars menu-toggle" id="menu-toggle"></i>
+      <h4 class="ms-3 mb-0">Customer Dashboard</h4>
+    </div>
+    <a href="index.html" id="backtohome">Back to Home</a>
+  </div>
+
+  <div id="dashboard-view">
+    <div class="user-info">
+      <div class="user-info-header">
+        <h5 class="mb-0">User Information</h5>
+        <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fas fa-edit"></i></button>
+      </div>
+      <div class="user-info-content">
+        <div class="user-info-item"><strong>Name</strong><span id="user-name"></span></div>
+        <div class="user-info-item"><strong>Email</strong><span id="user-email"></span></div>
+        <div class="user-info-item"><strong>Mobile</strong><span id="user-mobile"></span></div>
+        <div class="user-info-item"><strong>Alternative Number</strong><span id="user-alt-mobile"></span></div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Account Details</h5>
+        <div class="d-flex justify-content-between flex-wrap account-details-container">
+          <div class="account-detail balance"><p><strong>Balance</strong></p><p id="balance" class="h4">300₹</p></div>
+          <div class="account-detail plan"><p><strong>Current Plan</strong></p><p id="current-plan" class="h4"></p><small id="expiry-date"></small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Usage Statistics</h5>
+        <canvas id="usageChart"></canvas>
+        <div class="usage-stats mt-2">
+          <h6>Data Usage</h6>
+          <div class="usage-bar"><div class="used"></div></div>
+          <div class="usage-text"><span id="data-used">Used: 12GB</span><span id="data-remaining">Remaining: 8GB</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center"><button class="logout-btn">Logout</button></div>
+  </div>
+
+  <div id="recharge-history-view" style="display: none;">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Filter Recharge History</h5>
+        <div class="date-range-card">
+          <div class="row">
+            <div class="col-md-6 mb-3"><label for="start-date" class="form-label">Start Date</label><input type="date" class="form-control" id="start-date"></div>
+            <div class="col-md-6 mb-3"><label for="end-date" class="form-label">End Date</label><input type="date" class="form-control" id="end-date"></div>
+          </div>
+          <button id="view-all-btn" class="btn btn-primary">View All</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Recharge History</h5>
+        <div class="table-responsive">
+          <table class="table">
+            <thead><tr><th>Transaction ID</th><th>Date</th><th>Plan</th><th>Amount</th><th>Status</th><th>Download</th></tr></thead>
+            <tbody id="history-lists"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="autopay-management-view" style="display: none;">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>AutoPay Management</h5>
+        <div class="status-toggle">
+          <input type="checkbox" id="autopay-toggle"><label for="autopay-toggle">Toggle</label><span>Enable AutoPay (Monthly Recharge)</span>
+        </div>
+        <div id="autopay-card-form" style="display: none;">
+          <h5 class="mt-4">Add a New Card</h5>
+          <form id="add-card-form-autopay">
+            <div class="mb-3"><label for="autopay-card-number" class="form-label">Card Number</label><input type="text" class="form-control" id="autopay-card-number" placeholder="1234 5678 9012 3456" required></div>
+            <div class="mb-3"><label for="autopay-card-holder" class="form-label">Card Holder Name</label><input type="text" class="form-control" id="autopay-card-holder" placeholder="John Doe" required></div>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label for="autopay-expiry-date" class="form-label">Expiry Date</label><input type="text" class="form-control" id="autopay-expiry-date" placeholder="MM/YY" required></div>
+              <div class="col-md-6 mb-3"><label for="autopay-cvv" class="form-label">CVV</label><input type="text" class="form-control" id="autopay-cvv" placeholder="123" required></div>
+            </div>
+            <div class="mb-3">
+              <label for="autopay-plan" class="form-label">Select Plan</label>
+              <select class="form-select" id="autopay-plan" required></select>
+            </div>
+            <button type="submit" class="btn btn-primary">Enable AutoPay</button>
+          </form>
+        </div>
+        <div id="selected-card-display" class="mt-4 p-3 bg-light rounded" style="display: none;">
+          <h5>Selected Card for AutoPay</h5><p id="selected-card-info" class="mb-0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="saved-payment-view" style="display: none;">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Saved Payment Methods</h5>
+        <ul id="saved-cards-list" class="mt-4"></ul>
+        <button class="btn btn-primary mt-3" id="add-new-card-btn" data-bs-toggle="modal" data-bs-target="#addCardModal"><i class="fas fa-plus me-2"></i>Add New Card</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="addCardModalLabel">Add New Card</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body">
+          <form id="add-card-form-modal">
+            <div class="mb-3"><label for="modal-card-number" class="form-label">Card Number</label><input type="text" class="form-control" id="modal-card-number" placeholder="1234 5678 9012 3456" required></div>
+            <div class="mb-3"><label for="modal-card-holder" class="form-label">Card Holder Name</label><input type="text" class="form-control" id="modal-card-holder" placeholder="John Doe" required></div>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label for="modal-expiry-date" class="form-label">Expiry Date</label><input type="text" class="form-control" id="modal-expiry-date" placeholder="MM/YY" required></div>
+              <div class="col-md-6 mb-3"><label for="modal-cvv" class="form-label">CVV</label><input type="text" class="form-control" id="modal-cvv" placeholder="123" required></div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add Card</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="editModalLabel">Edit User Information</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3"><label for="edit-name" class="form-label">Name</label><input type="text" class="form-control" id="edit-name" disabled></div>
+            <div class="mb-3"><label for="edit-email" class="form-label">Email</label><input type="email" class="form-control" id="edit-email"></div>
+            <div class="mb-3"><label for="edit-mobile" class="form-label">Mobile</label><input type="text" class="form-control" id="edit-mobile" disabled></div>
+            <div class="mb-3"><label for="edit-alt-mobile" class="form-label">Alternative Number</label><input type="text" class="form-control" id="edit-alt-mobile"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="save-changes">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="successModalLabel">Success</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body"><p id="success-message" class="mb-0 text-center py-3"></p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="changeCardModal" tabindex="-1" aria-labelledby="changeCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changeCardModalLabel">Change Card</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="change-card-form">
+            <div class="mb-3">
+              <label class="form-label">Card Number</label>
+              <input type="text" class="form-control" id="change-card-number" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Card Holder Name</label>
+              <input type="text" class="form-control" id="change-card-holder" required>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Expiry Date</label>
+                <input type="text" class="form-control" id="change-expiry-date" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-control" id="change-cvv" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Card</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="changePlanModal" tabindex="-1" aria-labelledby="changePlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePlanModalLabel">Change Plan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="change-plan-form">
+            <div class="mb-3">
+              <label for="change-plan" class="form-label">Select New Plan</label>
+              <select class="form-select" id="change-plan" required></select>
+            </div>
+            <button type="submit" class="btn btn-primary">Change Plan</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>window.jsPDF = window.jspdf.jsPDF;</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const accessToken = sessionStorage.getItem('accessToken');
+    const mobileNumber = sessionStorage.getItem('mobileNumber');
+    if (!accessToken || !mobileNumber) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const headers = {
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    };
+
+    async function fetchWithAuth(url, options = {}) {
+      options.headers = { ...headers, ...options.headers };
+      const response = await fetch(url, options);
+      if (response.status === 401) {
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('mobileNumber');
+        window.location.href = 'login.html';
+        return null;
+      }
+      return response;
+    }
+
+    const userResponse = await fetchWithAuth(`http://localhost:8083/api/getusers?phone=${mobileNumber}`);
+    if (!userResponse) return;
+    const user = await userResponse.json();
+    if (userResponse.ok) {
+      document.getElementById('user-name').textContent = user.name || 'N/A';
+      document.getElementById('user-email').textContent = user.email || 'N/A';
+      document.getElementById('user-mobile').textContent = user.phoneNumber || 'N/A';
+      document.getElementById('user-alt-mobile').textContent = 'Not Set';
+      document.getElementById('edit-name').value = user.name || '';
+      document.getElementById('edit-email').value = user.email || '';
+      document.getElementById('edit-mobile').value = user.phoneNumber || '';
+      document.getElementById('edit-alt-mobile').value = '';
+    }
+
+    const latestRechargeResponse = await fetchWithAuth(`http://localhost:8083/api/recharge-history/latest?phone=${mobileNumber}`);
+    if (!latestRechargeResponse) return;
+    const latestRecharge = await latestRechargeResponse.json();
+    if (latestRechargeResponse.ok) {
+      document.getElementById('current-plan').textContent = latestRecharge.planName || 'N/A';
+      document.getElementById('expiry-date').textContent = `Expiry-date: ${new Date(latestRecharge.expiryDate).toLocaleDateString()}`;
+    }
+
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeBtn = document.getElementById('close-btn');
+    const dashboardView = document.getElementById('dashboard-view');
+    const rechargeHistoryView = document.getElementById('recharge-history-view');
+    const autopayManagementView = document.getElementById('autopay-management-view');
+    const savedPaymentView = document.getElementById('saved-payment-view');
+    const dashboardLink = document.getElementById('dashboard-link');
+    const rechargeHistoryLink = document.getElementById('recharge-history-link');
+    const autopayManagementLink = document.getElementById('autopay-management-link');
+    const savedPaymentLink = document.getElementById('saved-payment-link');
+    const logoutBtn = document.getElementById('logout-btn');
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    const successMessage = document.getElementById('success-message');
+
+    menuToggle.addEventListener('click', () => sidebar.classList.add('active'));
+    closeBtn.addEventListener('click', () => sidebar.classList.remove('active'));
+
+    function setActiveView(view) {
+      dashboardView.style.display = 'none';
+      rechargeHistoryView.style.display = 'none';
+      autopayManagementView.style.display = 'none';
+      savedPaymentView.style.display = 'none';
+      dashboardLink.classList.remove('active');
+      rechargeHistoryLink.classList.remove('active');
+      autopayManagementLink.classList.remove('active');
+      savedPaymentLink.classList.remove('active');
+      view.style.display = 'block';
+    }
+
+    dashboardLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActiveView(dashboardView);
+      dashboardLink.classList.add('active');
+    });
+
+    rechargeHistoryLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActiveView(rechargeHistoryView);
+      rechargeHistoryLink.classList.add('active');
+      loadRechargeHistory();
+    });
+
+    autopayManagementLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActiveView(autopayManagementView);
+      autopayManagementLink.classList.add('active');
+      loadPlans();
+      loadAutoPayDetails();
+    });
+
+    savedPaymentLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActiveView(savedPaymentView);
+      savedPaymentLink.classList.add('active');
+      loadSavedCards();
+    });
+
+    logoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('mobileNumber');
+      window.location.href = 'login.html';
+    });
+
+    document.querySelector('.logout-btn').addEventListener('click', () => {
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('mobileNumber');
+      window.location.href = 'login.html';
+    });
+
+    const ctx = document.getElementById('usageChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Used', 'Remaining'],
+        datasets: [{
+          data: [12, 8],
+          backgroundColor: ['#5856d6', '#989898'],
+          borderColor: ['#5856d6', '#ffffff'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } }
+      }
+    });
+
+    document.getElementById('save-changes').addEventListener('click', async () => {
+      const updatedUser = {
+        phoneNumber: mobileNumber,
+        email: document.getElementById('edit-email').value,
+      };
+      const response = await fetchWithAuth('http://localhost:8083/api/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedUser)
+      });
+      if (!response) return;
+      if (response.ok) {
+        document.getElementById('user-email').textContent = updatedUser.email;
+        successMessage.textContent = 'Email updated successfully!';
+        successModal.show();
+        setTimeout(() => successModal.hide(), 2000);
+      } else {
+        const errorText = await response.text();
+        alert(`Failed to update email: ${errorText}`);
+      }
+    });
+
+    const autopayToggle = document.getElementById('autopay-toggle');
+    const autopayCardForm = document.getElementById('autopay-card-form');
+    const selectedCardDisplay = document.getElementById('selected-card-display');
+    const changeCardBtn = document.createElement('button');
+    changeCardBtn.id = 'change-card-btn';
+    changeCardBtn.className = 'btn btn-secondary mt-2';
+    changeCardBtn.textContent = 'Change Card';
+    changeCardBtn.style.display = 'none';
+    const changePlanBtn = document.createElement('button');
+    changePlanBtn.id = 'change-plan-btn';
+    changePlanBtn.className = 'btn btn-secondary mt-2 ms-2';
+    changePlanBtn.textContent = 'Change Plan';
+    changePlanBtn.style.display = 'none';
+    document.querySelector('#selected-card-display').appendChild(changeCardBtn);
+    document.querySelector('#selected-card-display').appendChild(changePlanBtn);
+
+    autopayToggle.addEventListener('change', async () => {
+      if (!autopayToggle.checked) {
+        const response = await fetchWithAuth(`http://localhost:8083/api/autopay/disable?phone=${mobileNumber}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (!response) return;
+        if (response.ok) {
+          autopayCardForm.style.display = 'none';
+          selectedCardDisplay.style.display = 'none';
+          changeCardBtn.style.display = 'none';
+          changePlanBtn.style.display = 'none';
+          successMessage.textContent = 'AutoPay disabled successfully!';
+          successModal.show();
+          setTimeout(() => successModal.hide(), 2000);
+          await loadSavedCards();
+        } else {
+          alert('Failed to disable AutoPay');
+          autopayToggle.checked = true;
+        }
+      } else {
+        autopayCardForm.style.display = 'block';
+        selectedCardDisplay.style.display = 'none';
+      }
+    });
+
+    async function loadRechargeHistory(startDate = null, endDate = null) {
+      let url = `http://localhost:8083/api/recharge-history?phone=${mobileNumber}`;
+      if (startDate && endDate) {
+        const start = new Date(startDate).toISOString();
+        const end = new Date(endDate).toISOString();
+        url += `&startDate=${start}&endDate=${end}`;
+      }
+      const response = await fetchWithAuth(url);
+      if (!response) return;
+      const history = await response.json();
+      const historyList = document.getElementById('history-lists');
+      historyList.innerHTML = '';
+      if (!history || history.length === 0) {
+        historyList.innerHTML = '<tr><td colspan="6" class="text-center">No recharge history found</td></tr>';
+        return;
+      }
+      history.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.rechargeId}</td>
+          <td>${new Date(item.rechargeDate).toLocaleDateString()}</td>
+          <td>${item.plan.planName}</td>
+          <td>₹${item.plan.price}</td>
+          <td>Success</td>
+          <td><button class="btn btn-sm btn-primary download-btn" data-id="${item.rechargeId}">Download</button></td>
+        `;
+        historyList.appendChild(row);
+      });
+    }
+
+    document.getElementById('view-all-btn').addEventListener('click', async () => {
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+        alert('Start date must be before end date');
+        return;
+      }
+      await loadRechargeHistory(startDate, endDate);
+    });
+
+    async function loadAutoPayDetails() {
+      const mobileNumber = sessionStorage.getItem('mobileNumber');
+      if (!mobileNumber) {
+        console.error('Mobile number not found in sessionStorage');
+        return null;
+      }
+
+      const response = await fetchWithAuth(`http://localhost:8083/api/autopay?phone=${mobileNumber}`);
+      if (!response) return null;
+
+      const autopay = await response.json();
+      const autopayToggle = document.getElementById('autopay-toggle');
+      const autopayCardForm = document.getElementById('autopay-card-form');
+      const selectedCardDisplay = document.getElementById('selected-card-display');
+      const changeCardBtn = document.getElementById('change-card-btn');
+      const changePlanBtn = document.getElementById('change-plan-btn');
+
+      if (!autopayToggle || !autopayCardForm || !selectedCardDisplay || !changeCardBtn || !changePlanBtn) {
+        console.error('One or more AutoPay UI elements are missing:', {
+          autopayToggle, autopayCardForm, selectedCardDisplay, changeCardBtn, changePlanBtn
+        });
+        return autopay;
+      }
+
+      if (autopay && autopay.status === 'ACTIVE') {
+        autopayToggle.checked = true;
+        autopayCardForm.style.display = 'none';
+        selectedCardDisplay.style.display = 'block';
+        changeCardBtn.style.display = 'block';
+        changePlanBtn.style.display = 'block';
+        document.getElementById('selected-card-info').textContent =
+                `Card ending ${autopay.cardNumber.slice(-4)} | Plan: ${autopay.plan.planName} (₹${autopay.plan.price})`;
+      } else {
+        autopayToggle.checked = false;
+        autopayCardForm.style.display = 'none';
+        selectedCardDisplay.style.display = 'none';
+        changeCardBtn.style.display = 'none';
+        changePlanBtn.style.display = 'none';
+      }
+
+      return autopay;
+    }
+
+    function validateCardDetails(cardNumber, expiryDate, cvv) {
+      const cardRegex = /^\d{16}$/;
+      const expiryRegex = /^\d{2}\/\d{2}$/;
+      const cvvRegex = /^\d{3}$/;
+      return cardRegex.test(cardNumber.replace(/\s/g, '')) &&
+              expiryRegex.test(expiryDate) &&
+              cvvRegex.test(cvv);
+    }
+
+    changeCardBtn.addEventListener('click', () => {
+      const changeCardModal = new bootstrap.Modal(document.getElementById('changeCardModal'));
+      changeCardModal.show();
+    });
+
+    document.getElementById('change-card-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cardNumber = document.getElementById('change-card-number').value;
+      const expiryDate = document.getElementById('change-expiry-date').value;
+      const cvv = document.getElementById('change-cvv').value;
+
+      if (!validateCardDetails(cardNumber, expiryDate, cvv)) {
+        alert('Please enter valid card details');
+        return;
+      }
+
+      const response = await fetchWithAuth(`http://localhost:8083/api/autopay/update-card?phone=${mobileNumber}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardNumber: cardNumber.replace(/\s/g, '') })
+      });
+      if (!response) return;
+
+      if (response.ok) {
+        await loadAutoPayDetails();
+        await loadSavedCards();
+        successMessage.textContent = 'Card updated successfully!';
+        successModal.show();
+        setTimeout(() => successModal.hide(), 2000);
+        const changeCardModal = bootstrap.Modal.getInstance(document.getElementById('changeCardModal'));
+        changeCardModal.hide();
+      } else {
+        alert('Failed to update card');
+      }
+    });
+
+    changePlanBtn.addEventListener('click', async () => {
+      const changePlanModal = new bootstrap.Modal(document.getElementById('changePlanModal'));
+      const planSelect = document.getElementById('change-plan');
+      planSelect.innerHTML = '<option value="">Select a Plan</option>';
+      const response = await fetchWithAuth('http://localhost:8083/api/plans/all');
+      if (!response) return;
+      const plans = await response.json();
+      plans.forEach(plan => {
+        const option = document.createElement('option');
+        option.value = plan.planId;
+        option.textContent = `${plan.planName} - ₹${plan.price}`;
+        planSelect.appendChild(option);
+      });
+      changePlanModal.show();
+    });
+
+    document.getElementById('change-plan-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const planId = document.getElementById('change-plan').value;
+      const autopay = await loadAutoPayDetails();
+      if (planId && autopay) {
+        const autopayData = {
+          phoneNumber: mobileNumber,
+          planId: parseInt(planId),
+          paymentMethod: autopay.paymentMethod,
+          cardNumber: autopay.cardNumber,
+          status: 'ACTIVE'
+        };
+        const response = await fetchWithAuth('http://localhost:8083/api/autopay/enable', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(autopayData)
+        });
+        if (!response) return;
+        if (response.ok) {
+          await loadAutoPayDetails();
+          successMessage.textContent = 'Plan changed successfully!';
+          successModal.show();
+          setTimeout(() => successModal.hide(), 2000);
+          const changePlanModal = bootstrap.Modal.getInstance(document.getElementById('changePlanModal'));
+          changePlanModal.hide();
+        } else {
+          alert('Failed to change plan');
+        }
+      }
+    });
+
+    document.getElementById('add-card-form-autopay').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cardNumber = document.getElementById('autopay-card-number').value;
+      const expiryDate = document.getElementById('autopay-expiry-date').value;
+      const cvv = document.getElementById('autopay-cvv').value;
+      const planId = document.getElementById('autopay-plan').value;
+
+      if (!validateCardDetails(cardNumber, expiryDate, cvv)) {
+        alert('Please enter valid card details');
+        return;
+      }
+
+      const autopayData = {
+        phoneNumber: mobileNumber,
+        planId: parseInt(planId),
+        paymentMethod: 'CARD',
+        cardNumber: cardNumber.replace(/\s/g, ''),
+        status: 'ACTIVE'
+      };
+
+      const response = await fetchWithAuth('http://localhost:8083/api/autopay/enable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(autopayData)
+      });
+      if (!response) return;
+
+      if (response.ok) {
+        await loadAutoPayDetails();
+        await loadSavedCards();
+        successMessage.textContent = 'AutoPay enabled successfully!';
+        successModal.show();
+        setTimeout(() => successModal.hide(), 2000);
+      } else {
+        alert('Failed to enable AutoPay');
+      }
+    });
+
+    document.getElementById('add-card-form-modal').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cardNumber = document.getElementById('modal-card-number').value;
+      const expiryDate = document.getElementById('modal-expiry-date').value;
+      const cvv = document.getElementById('modal-cvv').value;
+
+      if (!validateCardDetails(cardNumber, expiryDate, cvv)) {
+        alert('Please enter valid card details');
+        return;
+      }
+
+      const autopay = await loadAutoPayDetails();
+      if (autopay && autopay.status === 'ACTIVE') {
+        const response = await fetchWithAuth(`http://localhost:8083/api/autopay/update-card?phone=${mobileNumber}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cardNumber: cardNumber.replace(/\s/g, '') })
+        });
+        if (!response) return;
+
+        if (response.ok) {
+          await loadSavedCards();
+          successMessage.textContent = 'Card updated successfully!';
+          successModal.show();
+          setTimeout(() => successModal.hide(), 2000);
+          const addCardModal = bootstrap.Modal.getInstance(document.getElementById('addCardModal'));
+          addCardModal.hide();
+        } else {
+          alert('Failed to update card');
+        }
+      }
+    });
+
+    async function loadSavedCards() {
+      const response = await fetchWithAuth(`http://localhost:8083/api/autopay?phone=${mobileNumber}`);
+      if (!response) return;
+      const autopay = await response.json();
+      const cardsList = document.getElementById('saved-cards-list');
+      cardsList.innerHTML = '';
+
+      if (!autopay || !autopay.cardNumber) {
+        cardsList.innerHTML = `
+          <div class="alert alert-info text-center" role="alert">
+            No cards added. Please add a new card.
+          </div>
+        `;
+        return;
+      }
+
+      const li = document.createElement('li');
+      li.className = 'list-group-item';
+      li.textContent = `Card ending ${autopay.cardNumber.slice(-4)}`;
+      cardsList.appendChild(li);
+    }
+
+    async function loadPlans() {
+      const response = await fetchWithAuth('http://localhost:8083/api/plans/all');
+      if (!response) return;
+      const plans = await response.json();
+      const planSelect = document.getElementById('autopay-plan');
+      planSelect.innerHTML = '<option value="">Select a Plan</option>';
+      plans.forEach(plan => {
+        const option = document.createElement('option');
+        option.value = plan.planId;
+        option.textContent = `${plan.planName} - ₹${plan.price}`;
+        planSelect.appendChild(option);
+      });
+    }
+
+    await loadRechargeHistory();
+    await loadAutoPayDetails();
+    await loadSavedCards();
+  });
+</script>
+</body>
+</html>
