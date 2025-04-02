@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RechargeFlow Admin - SPA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+<div class="sidebar">
+    <div class="hamburger"><i class="fas fa-bars"></i></div>
+    <div class="sidebar-header"><h4>RechargeFlow Admin</h4></div>
+    <hr/>
+    <a href="#" class="menu-item active" data-section="dashboard"><i class="fas fa-home"></i><span>Dashboard</span></a>
+    <a href="#" class="menu-item" data-section="user-management"><i class="fas fa-users"></i><span>User Management</span></a>
+    <a href="#" class="menu-item" data-section="plan-management"><i class="fas fa-tags"></i><span>Plan Management</span></a>
+    <a href="#" class="menu-item" data-section="transactions"><i class="fas fa-exchange-alt"></i><span>Transactions</span></a>
+    <a href="#" class="menu-item" data-section="support"><i class="fas fa-headset"></i><span>Support</span></a>
+    <a href="#" class="menu-item" data-section="analysis"><i class="fas fa-chart-line"></i><span>Analysis</span></a>
+    <a href="#" class="menu-item logout-item" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+</div>
+
+<div class="content" id="content">
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section active">
+        <div class="top-bar">
+            <h2 class="top-bar-title">Dashboard</h2>
+            <div class="top-bar-actions">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search..."></div>
+                <button class="btn btn-primary" id="add-new-btn"><i class="fas fa-plus me-2"></i>Add New</button>
+                <div class="user-actions">
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-users"></i></div><div class="card-body"><h3>2,194</h3><p>Active Users</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(247, 37, 133, 0.1); color: #F72585;"><i class="fas fa-user-times"></i></div><div class="card-body"><h3>53</h3><p>In-Active</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-calendar-times"></i></div><div class="card-body"><h3>5</h3><p>Expire in 3 days</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-wallet"></i></div><div class="card-body"><h3>₹350K</h3><p>Total Income</p></div></div></div></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="table-responsive">
+                    <div class="table-header"><h5 class="mb-0">Recent Payments</h5><button class="btn btn-sm btn-primary">View All</button></div>
+                    <table class="table">
+                        <thead><tr><th>Name</th><th>Plan</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="payment-list">
+                        <tr><td>Siva</td><td>Basic Plan</td><td>₹120</td><td><span class="status-badge status-active">Paid</span></td><td><button class="action-btn">View</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="table-responsive">
+                    <div class="table-header"><h5 class="mb-0">New Users</h5><button class="btn btn-sm btn-primary">View All</button></div>
+                    <table class="table">
+                        <thead><tr><th>Profile</th><th>Name</th><th>Action</th></tr></thead>
+                        <tbody id="students-list">
+                        <tr><td><div class="icon-btn"><i class="fas fa-user"></i></div></td><td>Siva</td><td><i class="fas fa-edit text-primary" style="cursor: pointer;"></i></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Section -->
+    <div id="user-management" class="section">
+        <div class="top-bar">
+            <h2 class="top-bar-title">User Management</h2>
+            <div class="top-bar-actions">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search users..."></div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateUserModal"><i class="fas fa-plus me-2"></i>Update User</button>
+                <div class="user-actions">
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-4"><div class="card" onclick="showTable('active')"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-user-check"></i></div><div class="card-body"><h3 id="active-count">2</h3><p>Active Users</p></div></div></div></div>
+            <div class="col-md-4"><div class="card" onclick="showTable('expiring')"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-calendar-times"></i></div><div class="card-body"><h3 id="expiry-count">1</h3><p>Expiring Soon</p></div></div></div></div>
+            <div class="col-md-4"><div class="card" onclick="showTable('inactive')"><div class="card-flex"><div class="card-icon" style="background: rgba(247, 37, 133, 0.1); color: #F72585;"><i class="fas fa-user-times"></i></div><div class="card-body"><h3 id="inactive-count">1</h3><p>Inactive Users</p></div></div></div></div>
+        </div>
+        <div class="table-responsive" id="table-container">
+            <div class="table-header"><h5 class="mb-0" id="table-title">User List</h5><div class="d-flex gap-2"><select class="form-select form-select-sm" id="statusFilter"><option value="all">All Users</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="expiring">Expiring Soon</option><option value="blocked">Blocked</option></select><button class="btn btn-sm btn-primary" id="export-btn-user">Export</button></div></div>
+            <table class="table">
+                <thead><tr><th>Name</th><th>Phone Number</th><th>Plan</th><th>Expiry Date</th><th>Last Transaction</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Plan Management Section -->
+    <div id="plan-management" class="section">
+        <div class="top-bar">
+            <h2 class="top-bar-title">Plan Management</h2>
+            <div class="top-bar-actions">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search plans..."></div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlanModal"><i class="fas fa-plus me-2"></i>Add New Plan</button>
+                <div class="user-actions">
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-4"><div class="card" onclick="showTable('active')"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-tag"></i></div><div class="card-body"><h3 id="active-plan-count">4</h3><p>Active Plans</p></div></div></div></div>
+            <div class="col-md-4"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-star"></i></div><div class="card-body"><h3 id="popular-plan">Premium</h3><p>Most Popular</p></div></div></div></div>
+            <div class="col-md-4"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-users"></i></div><div class="card-body"><h3 id="subscription-count">1458</h3><p>Active Subscriptions</p></div></div></div></div>
+        </div>
+        <div class="table-responsive">
+            <div class="table-header"><h5 class="mb-0" id="table-title1">Available Plans</h5><div class="d-flex gap-2"><select class="form-select form-select-sm" id="statusFilterPlan"><option value="all">All Plans</option><option value="active">Active</option><option value="inactive">Inactive</option></select><button class="btn btn-sm btn-primary" id="export-btn-plan">Export</button></div></div>
+            <table class="table">
+                <thead><tr><th>plan Id</th><th>Plan Name</th><th>Price</th><th>Data</th><th>Validity</th><th>Features</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="plans-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Transactions Section -->
+    <div id="transactions" class="section">
+        <div class="top-bar">
+            <h2 class="top-bar-title">Transactions</h2>
+            <div class="top-bar-actions">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search transactions..." id="searchTransaction"></div>
+                <button class="btn btn-primary" id="export-btn-transaction"><i class="fas fa-download me-2"></i>Export</button>
+                <div class="user-actions">
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-wallet"></i></div><div class="card-body"><h3 id="total-revenue">₹127K</h3><p>Total Revenue (Month)</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(247, 37, 133, 0.1); color: #F72585;"><i class="fas fa-receipt"></i></div><div class="card-body"><h3 id="transaction-count">1,482</h3><p>Transactions (Month)</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-money-bill-wave"></i></div><div class="card-body"><h3 id="avg-transaction">₹85.75</h3><p>Avg Transaction</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-arrow-trend-up"></i></div><div class="card-body"><h3 id="growth-rate">+12.5%</h3><p>Growth Rate</p></div></div></div></div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3"><label for="dateRange" class="form-label">Date Range</label><select class="form-select" id="dateRange"><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="last7days">Last 7 Days</option><option value="last30days" selected>Last 30 Days</option><option value="thisMonth">This Month</option><option value="lastMonth">Last Month</option><option value="custom">Custom Range</option></select></div>
+                    <div class="col-md-3"><label for="paymentStatus" class="form-label">Payment Status</label><select class="form-select" id="paymentStatus"><option value="all" selected>All Statuses</option><option value="SUCCESS">Successful</option><option value="PENDING">Pending</option><option value="FAILED">Failed</option><option value="REFUNDED">Refunded</option></select></div>
+                    <div class="col-md-3"><label for="paymentMethod" class="form-label">Payment Method</label><select class="form-select" id="paymentMethod"><option value="all" selected>All Methods</option><option value="CARD">Credit Card</option><option value="NET_BANKING">Bank Transfer</option><option value="UPI">UPI</option><option value="WALLET">Digital Wallet</option></select></div>
+                    <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary w-100" id="apply-filters">Apply Filters</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <div class="table-header"><h5 class="mb-0">Recent Transactions</h5><div class="d-flex gap-2"><select class="form-select form-select-sm" id="recordsPerPage"><option value="5">5 per page</option><option value="10" selected>10 per page</option><option value="25">25 per page</option><option value="50">50 per page</option></select></div></div>
+            <table class="table">
+                <thead><tr><th>Transaction ID</th><th>Customer</th><th>Date & Time</th><th>Amount</th><th>Plan</th><th>Payment Method</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="transactions-table"></tbody>
+            </table>
+            <div class="d-flex justify-content-between align-items-center p-3" id="pagination-container">
+                <div>Showing <span id="showing-records">1-10</span> of <span id="total-records">8</span> records</div>
+                <div class="pagination-container" id="pagination-buttons"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Section -->
+    <div id="support" class="section">
+        <div class="top-bar">
+            <h2 class="top-bar-title">Support Tickets</h2>
+            <div class="top-bar-actions">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search tickets..." id="searchTicket"></div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateTicketModal"><i class="fas fa-plus me-2"></i>Update Ticket</button>
+                <div class="user-actions">
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-ticket-alt"></i></div><div class="card-body"><h3 id="total-tickets">12</h3><p>Total Tickets</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card" onclick="showTable('PENDING')"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-clock"></i></div><div class="card-body"><h3 id="pending-tickets">5</h3><p>Pending</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card" onclick="showTable('PROCESSING')"><div class="card-flex"><div class="card-icon" style="background: rgba(114, 9, 183, 0.1); color: #7209B7;"><i class="fas fa-sync"></i></div><div class="card-body"><h3 id="processing-tickets">4</h3><p>Processing</p></div></div></div></div>
+            <div class="col-md-3 col-sm-6"><div class="card" onclick="showTable('RESOLVED')"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-check-circle"></i></div><div class="card-body"><h3 id="resolved-tickets">3</h3><p>Resolved</p></div></div></div></div>
+        </div>
+        <div class="table-responsive">
+            <div class="table-header"><h5 class="mb-0" id="table-title2">Customer Support Tickets</h5><div class="d-flex gap-2"><select class="form-select form-select-sm" id="statusFilterSupport"><option value="all">All Tickets</option><option value="PENDING">Pending</option><option value="PROCESSING">Processing</option><option value="RESOLVED">Resolved</option><option value="DENIED">Denied</option></select><button class="btn btn-sm btn-primary" id="export-btn-support">Export</button></div></div>
+            <table class="table">
+                <thead><tr><th>Ticket ID</th><th>Customer</th><th>Subject</th><th>Created</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="tickets-table"></tbody>
+            </table>
+            <div class="d-flex justify-content-between align-items-center mt-4" id="pagination-container-support">
+                <div>Showing <span id="showing-records-support">1-3</span> of <span id="total-records-support">12</span> entries</div>
+                <div class="pagination-container" id="pagination-buttons-support"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Section -->
+    <div id="analysis" class="section">
+        <div class="top-bar">
+            <h2 class="top-bar-title">Analysis</h2>
+            <div class="top-bar-actions">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search..."></div>
+                <button class="btn btn-primary" id="export-btn-analysis"><i class="fas fa-download me-2"></i>Export Report</button>
+                <div class="user-actions">
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+                    <div class="icon-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                <div class="d-flex align-items-center"><h5 class="mb-0 me-3">Analytics Overview</h5><span class="badge bg-success">Live Data</span></div>
+                <div class="d-flex gap-2">
+                    <select class="form-select" id="analysis-date-range"><option>Last 30 Days</option><option>Last Quarter</option><option>Last Year</option><option>Custom Range</option></select>
+                    <button class="btn btn-outline-primary">Apply</button>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-users"></i></div><div class="card-body"><h3>2,194</h3><p>Total Users</p><small class="text-success"><i class="fas fa-arrow-up"></i> 12% increase</small></div></div></div></div>
+            <div class="col-xl-3 col-md-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(247, 37, 133, 0.1); color: #F72585;"><i class="fas fa-wallet"></i></div><div class="card-body"><h3>₹15,000</h3><p>Monthly Revenue</p><small class="text-success"><i class="fas fa-arrow-up"></i> 8% increase</small></div></div></div></div>
+            <div class="col-xl-3 col-md-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-tags"></i></div><div class="card-body"><h3>Premium</h3><p>Popular Plan</p><small class="text-success"><i class="fas fa-arrow-up"></i> 5% increase</small></div></div></div></div>
+            <div class="col-xl-3 col-md-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-user-plus"></i></div><div class="card-body"><h3>53</h3><p>New Users This Week</p><small class="text-success"><i class="fas fa-arrow-up"></i> 15% increase</small></div></div></div></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 mb-4"><div class="card h-100"><div class="card-body"><h5 class="card-title">User Growth</h5><div style="height: 300px; position: relative;"><canvas id="userGrowthChart"></canvas></div></div></div></div>
+            <div class="col-lg-6 mb-4"><div class="card h-100"><div class="card-body"><h5 class="card-title">Revenue Generated</h5><div style="height: 300px; position: relative;"><canvas id="revenueChart"></canvas></div></div></div></div>
+            <div class="col-lg-6 mb-4"><div class="card h-100"><div class="card-body"><h5 class="card-title">Plan Distribution</h5><div style="height: 300px; position: relative;"><canvas id="planChart"></canvas></div></div></div></div>
+            <div class="col-lg-6 mb-4"><div class="card h-100"><div class="card-body"><h5 class="card-title">Transaction Summary</h5><div style="height: 300px; position: relative;"><canvas id="transactionChart"></canvas></div></div></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">High Priority Notifications</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-flush" id="notification-list">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">User #123: Payment Failure<span class="status-badge status-warning">Urgent</span></li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">User #456: Service Complaint<span class="status-badge status-danger">Critical</span></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="navigateTo('support')">View All Support Tickets</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Admin Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profile-form">
+                    <div class="mb-3"><label for="admin-name" class="form-label">Name</label><input type="text" class="form-control" id="admin-name" value="Admin User" required></div>
+                    <div class="mb-3"><label for="admin-phone" class="form-label">Phone Number</label><input type="tel" class="form-control" id="admin-phone" value="+91 9876543210" pattern="[0-9]{10}" required></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-profile-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="updateUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateUserModalLabel">Update User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateUserForm">
+                    <div class="mb-3"><label for="searchUser" class="form-label">Username/Phone Number</label><input type="text" class="form-control" id="searchUser" placeholder="Enter username or phone" required></div>
+                </form>
+                <div id="userResult" class="mt-3" style="display: none;">
+                    <p id="userDetails"></p>
+                    <select class="form-select mb-3" id="updateStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="expiring">Expiring Soon</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                    <button class="btn btn-primary" id="updateUserStatusBtn">Update Status</button>
+                </div>
+                <div id="errorMessage" class="mt-3 text-danger" style="display: none;">Number not present in database</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label for="userName" class="form-label">Full Name</label><input type="text" class="form-control" id="userName" required></div>
+                        <div class="col-md-6"><label for="userPhone" class="form-label">Phone Number</label><input type="tel" class="form-control" id="userPhone" required></div>
+                        <div class="col-md-6"><label for="userPlan" class="form-label">Select Plan</label><select class="form-select" id="userPlan" required><option value="">Choose a plan</option><option value="basic">Basic Plan</option><option value="standard">Standard Plan</option><option value="premium">Premium Plan</option><option value="ultimate">Ultimate Plan</option></select></div>
+                        <div class="col-md-6"><label for="userStatus" class="form-label">Status</label><select class="form-select" id="userStatus"><option value="active">Active</option><option value="inactive">Inactive</option><option value="expiring">Expiring Soon</option><option value="blocked">Blocked</option></select></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveUserBtn">Save User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="statusChangeModal" tabindex="-1" aria-labelledby="statusChangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusChangeModalLabel">Change User Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>User: <span id="statusUserName"></span> (<span id="statusUserPhone"></span>)</p>
+                <select class="form-select" id="newStatus">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="expiring">Expiring soon</option>
+                    <option value="blocked">Blocked</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveStatusBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPlanModal" tabindex="-1" aria-labelledby="addPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPlanModalLabel">Add New Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addPlanForm">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label for="planId" class="form-label">Plan Id</label><input type="text" class="form-control" id="planId" required></div>
+                        <div class="col-md-6"><label for="planName" class="form-label">Plan Name</label><input type="text" class="form-control" id="planName" required></div>
+                        <div class="col-md-6"><label for="planPrice" class="form-label">Price (₹)</label><input type="number" class="form-control" id="planPrice" required></div>
+                        <div class="col-md-6"><label for="planData" class="form-label">Data Allowance</label><input type="text" class="form-control" id="planData" placeholder="e.g. 10GB" required></div>
+                        <div class="col-md-6"><label for="planValidity" class="form-label">Validity (Days)</label><input type="number" class="form-control" id="planValidity" required></div>
+                        <div class="col-md-12"><label for="planFeatures" class="form-label">Features</label><textarea class="form-control" id="planFeatures" rows="3" placeholder="Enter plan features, one per line"></textarea></div>
+                        <div class="col-md-6"><label for="planStatus" class="form-label">Status</label><select class="form-select" id="planStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="savePlanBtn">Save Plan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updatePlanModal" tabindex="-1" aria-labelledby="updatePlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePlanModalLabel">Update Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updatePlanForm">
+                    <div class="mb-3"><label for="searchPlan" class="form-label">Plan Name</label><input type="text" class="form-control" id="searchPlan" placeholder="Enter plan name" required></div>
+                </form>
+                <div id="planResult" class="mt-3" style="display: none;">
+                    <p id="planDetails"></p>
+                    <select class="form-select mb-3" id="updatePlanStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <button class="btn btn-primary" id="updatePlanStatusBtn">Update Sta</button>
+                </div>
+                <div id="errorMessagePlan" class="mt-3 text-danger" style="display: none;">Plan not present in database</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editPlanModal" tabindex="-1" aria-labelledby="editPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPlanModalLabel">Edit Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPlanForm">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label for="editPlanId" class="form-label">Plan Id</label><input type="text" class="form-control" id="editPlanId" required></div>
+                        <div class="col-md-6"><label for="editPlanName" class="form-label">Plan Name</label><input type="text" class="form-control" id="editPlanName" required></div>
+                        <div class="col-md-6"><label for="editPlanPrice" class="form-label">Price (₹)</label><input type="number" class="form-control" id="editPlanPrice" required></div>
+                        <div class="col-md-6"><label for="editPlanData" class="form-label">Data Allowance</label><input type="text" class="form-control" id="editPlanData" required></div>
+                        <div class="col-md-6"><label for="editPlanValidity" class="form-label">Validity (Days)</label><input type="number" class="form-control" id="editPlanValidity" required></div>
+                        <div class="col-md-12"><label for="editPlanFeatures" class="form-label">Features</label><textarea class="form-control" id="editPlanFeatures" rows="3"></textarea></div>
+                        <div class="col-md-6"><label for="editPlanStatus" class="form-label">Status</label><select class="form-select" id="editPlanStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveEditPlanBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="transactionDetailsModal" tabindex="-1" aria-labelledby="transactionDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transactionDetailsModalLabel">Transaction Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="transactionDetailsContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateTicketModal" tabindex="-1" aria-labelledby="updateTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateTicketModalLabel">Update Ticket Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateTicketForm">
+                    <div class="mb-3"><label for="searchTicketId" class="form-label">Ticket ID</label><input type="text" class="form-control" id="searchTicketId" placeholder="Enter ticket ID (e.g., #001)" required></div>
+                </form>
+                <div id="ticketResult" class="mt-3" style="display: none;">
+                    <p id="ticketDetails"></p>
+                    <select class="form-select mb-3" id="updateTicketStatus">
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="denied">Denied</option>
+                    </select>
+                    <button class="btn btn-primary" id="updateTicketStatusBtn">Update Status</button>
+                </div>
+                <div id="errorMessageTicket" class="mt-3 text-danger" style="display: none;">Ticket not present in database</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewTicketModal" tabindex="-1" aria-labelledby="viewTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewTicketModalLabel">Ticket Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="viewTicketContent"></div>
+            <div class="modal-footer">
+                <select class="form-select me-2" id="modalStatusSelect" style="width: auto;">
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="denied">Denied</option>
+                </select>
+                <button type="button" class="btn btn-primary" id="updateModalStatusBtn">Update Status</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -7,11 +7,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="../stylesheet/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 <div class="sidebar">
   <div class="hamburger"><i class="fas fa-bars"></i></div>
-  <div class="sidebar-header"><h4>Prepaid Admin</h4></div>
+  <div class="sidebar-header"><h4>RechargeFlow Admin</h4></div>
   <hr/>
   <a href="#" class="menu-item" id="dashboard"><i class="fas fa-home"></i><span>Dashboard</span></a>
   <a href="#" class="menu-item" id="user-management"><i class="fas fa-users"></i><span>User Management</span></a>
@@ -26,59 +28,217 @@
   <div class="top-bar">
     <h2 class="top-bar-title">Support Tickets</h2>
     <div class="top-bar-actions">
-      <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search tickets..."></div>
-      <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Update Ticket</button>
+      <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search tickets..." id="searchTicket"></div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateTicketModal"><i class="fas fa-plus me-2"></i>Update Ticket</button>
       <div class="user-actions">
-        <div class="icon-btn"><i class="fas fa-bell"></i></div>
-        <div class="icon-btn"><i class="fas fa-user"></i></div>
+        <div class="icon-btn" id="notification-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+        <div class="icon-btn" id="profile-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
       </div>
     </div>
   </div>
 
   <div class="row g-3 mb-4">
-    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-ticket-alt"></i></div><div class="card-body"><h3>12</h3><p>Total Tickets</p></div></div></div></div>
-    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-clock"></i></div><div class="card-body"><h3>5</h3><p>Pending</p></div></div></div></div>
-    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(114, 9, 183, 0.1); color: #7209B7;"><i class="fas fa-sync"></i></div><div class="card-body"><h3>4</h3><p>Processing</p></div></div></div></div>
-    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-check-circle"></i></div><div class="card-body"><h3>3</h3><p>Resolved</p></div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="card"><div class="card-flex"><div class="card-icon" style="background: rgba(76, 201, 240, 0.1); color: #4CC9F0;"><i class="fas fa-ticket-alt"></i></div><div class="card-body"><h3 id="total-tickets">12</h3><p>Total Tickets</p></div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="card" onclick="showTable('pending')"><div class="card-flex"><div class="card-icon" style="background: rgba(255, 184, 0, 0.1); color: #FFB800;"><i class="fas fa-clock"></i></div><div class="card-body"><h3 id="pending-tickets">5</h3><p>Pending</p></div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="card" onclick="showTable('processing')"><div class="card-flex"><div class="card-icon" style="background: rgba(114, 9, 183, 0.1); color: #7209B7;"><i class="fas fa-sync"></i></div><div class="card-body"><h3 id="processing-tickets">4</h3><p>Processing</p></div></div></div></div>
+    <div class="col-md-3 col-sm-6"><div class="card" onclick="showTable('resolved')"><div class="card-flex"><div class="card-icon" style="background: rgba(67, 97, 238, 0.1); color: #4361EE;"><i class="fas fa-check-circle"></i></div><div class="card-body"><h3 id="resolved-tickets">3</h3><p>Resolved</p></div></div></div></div>
   </div>
 
   <div class="table-responsive">
-    <div class="table-header"><h5 class="mb-0">Customer Support Tickets</h5><div class="d-flex gap-2"><select class="form-select form-select-sm"><option>All Tickets</option><option>Pending</option><option>Processing</option><option>Resolved</option><option>Denied</option></select><button class="btn btn-sm btn-primary">Export</button></div></div>
+    <div class="table-header">
+      <h5 class="mb-0" id="table-title">Customer Support Tickets</h5>
+      <div class="d-flex gap-2">
+        <select class="form-select form-select-sm" id="statusFilter">
+          <option value="all">All Tickets</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="resolved">Resolved</option>
+          <option value="denied">Denied</option>
+        </select>
+        <button class="btn btn-sm btn-primary" id="export-btn">Export</button>
+      </div>
+    </div>
     <table class="table">
       <thead><tr><th>Ticket ID</th><th>Customer</th><th>Subject</th><th>Created</th><th>Status</th><th>Action</th></tr></thead>
-      <tbody id="tickets-table">
-      <tr><td><strong>#001</strong></td><td><div class="d-flex align-items-center"><div class="icon-btn me-2"><i class="fas fa-user"></i></div><div><div>karthik</div><small class="text-muted">karthik@gmail.com</small></div></div></td><td>Issue with payment</td><td>2 hours ago</td><td><select class="form-select form-select-sm status-select"><option value="Processing" selected>Processing</option><option value="Resolved">Resolved</option><option value="Denied">Denied</option></select></td><td><button class="btn btn-sm btn-primary save-btn">Save</button><button class="btn btn-sm btn-outline-primary view-btn"><i class="fas fa-eye"></i></button></td></tr>
-      <tr><td><strong>#002</strong></td><td><div class="d-flex align-items-center"><div class="icon-btn me-2"><i class="fas fa-user"></i></div><div><div>siva</div><small class="text-muted">siva@gmail.com</small></div></div></td><td>Account locked</td><td>3 days ago</td><td><select class="form-select form-select-sm status-select"><option value="Processing">Processing</option><option value="Resolved" selected>Resolved</option><option value="Denied">Denied</option></select></td><td><button class="btn btn-sm btn-primary save-btn">Save</button><button class="btn btn-sm btn-outline-primary view-btn"><i class="fas fa-eye"></i></button></td></tr>
-      <tr><td><strong>#003</strong></td><td><div class="d-flex align-items-center"><div class="icon-btn me-2"><i class="fas fa-user"></i></div><div><div>kalai</div><small class="text-muted">kalai@gmail.com</small></div></div></td><td>Data not working</td><td>1 day ago</td><td><select class="form-select form-select-sm status-select"><option value="Processing" selected>Processing</option><option value="Resolved">Resolved</option><option value="Denied">Denied</option></select></td><td><button class="btn btn-sm btn-primary save-btn">Save</button><button class="btn btn-sm btn-outline-primary view-btn"><i class="fas fa-eye"></i></button></td></tr>
-      </tbody>
+      <tbody id="tickets-table"></tbody>
     </table>
-    <div class="d-flex justify-content-between align-items-center mt-4"><div>Showing 1 to 3 of 12 entries</div><nav><ul class="pagination"><li class="page-item disabled"><a class="page-link" href="#">Previous</a></li><li class="page-item active"><a class="page-link" href="#">1</a></li><li class="page-item"><a class="page-link" href="#">2</a></li><li class="page-item"><a class="page-link" href="#">3</a></li><li class="page-item"><a class="page-link" href="#">Next</a></li></ul></nav></div>
+    <div class="d-flex justify-content-between align-items-center mt-4" id="pagination-container">
+      <div>Showing <span id="showing-records">1-3</span> of <span id="total-records">12</span> entries</div>
+      <div class="pagination-container" id="pagination-buttons"></div>
+    </div>
   </div>
 </div>
 
-<div class="modal fade" id="viewTicketModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
+<div class="modal fade" id="updateTicketModal" tabindex="-1" aria-labelledby="updateTicketModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Ticket #001 - Issue with payment</h5>
+        <h5 class="modal-title" id="updateTicketModalLabel">Update Ticket Status</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="mb-4"><h6 class="fw-bold">Customer Information</h6><div class="d-flex"><div class="me-4"><div class="icon-btn mb-2" style="width: 50px; height: 50px;"><i class="fas fa-user"></i></div></div><div><p class="mb-1"><strong>Name:</strong> John Doe</p><p class="mb-1"><strong>Email:</strong> johndoe@example.com</p><p class="mb-1"><strong>Phone:</strong> +1 234 567 8901</p><p class="mb-1"><strong>Plan:</strong> Premium</p></div></div></div>
-        <div class="mb-4"><h6 class="fw-bold">Ticket Details</h6><p class="mb-1"><strong>Created:</strong> Feb 24, 2025 at 10:30 AM</p><p class="mb-1"><strong>Status:</strong> <span class="badge bg-warning">Processing</span></p><p class="mb-1"><strong>Priority:</strong> High</p></div>
-        <div class="mb-4"><h6 class="fw-bold">Description</h6><p>I tried to make a payment for my monthly plan renewal but the transaction failed. However, the amount was deducted from my account. Please help me resolve this issue as soon as possible.</p></div>
-        <div class="mb-4"><h6 class="fw-bold">Conversation</h6><div class="card mb-2"><div class="card-body"><div class="d-flex justify-content-between mb-2"><strong>Support Agent</strong><small>Today at 11:15 AM</small></div><p class="mb-0">Hello John, I understand your concern. Let me check your payment records and get back to you.</p></div></div><div class="card mb-3"><div class="card-body"><div class="d-flex justify-content-between mb-2"><strong>John Doe</strong><small>Today at 11:30 AM</small></div><p class="mb-0">Thank you for your prompt response. I'm waiting for your assistance.</p></div></div><div class="mb-3"><textarea class="form-control" rows="3" placeholder="Type your reply..."></textarea></div><button class="btn btn-primary">Send Reply</button></div>
+        <form id="updateTicketForm">
+          <div class="mb-3">
+            <label for="searchTicketId" class="form-label">Ticket ID</label>
+            <input type="text" class="form-control" id="searchTicketId" placeholder="Enter ticket ID (e.g., #001)" required>
+          </div>
+        </form>
+        <div id="ticketResult" class="mt-3" style="display: none;">
+          <p id="ticketDetails"></p>
+          <select class="form-select mb-3" id="updateTicketStatus">
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="resolved">Resolved</option>
+            <option value="denied">Denied</option>
+          </select>
+          <button class="btn btn-primary" id="updateTicketStatusBtn">Update Status</button>
+        </div>
+        <div id="errorMessage" class="mt-3 text-danger" style="display: none;">Ticket not present in database</div>
       </div>
-      <div class="modal-footer"><select class="form-select me-2" style="width: auto;"><option value="Processing" selected>Processing</option><option value="Resolved">Resolved</option><option value="Denied">Denied</option></select><button type="button" class="btn btn-primary">Update Status</button><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="notificationModalLabel">High Priority Notifications</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group list-group-flush" id="notification-list">
+          <li class="list-group-item d-flex justify-content-between align-items-center">User #123: Payment Failure<span class="status-badge status-warning">Urgent</span></li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">User #456: Service Complaint<span class="status-badge status-danger">Critical</span></li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='./support.html'">View All Support Tickets</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="profileModalLabel">Admin Profile</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="profile-form">
+          <div class="mb-3"><label for="admin-name" class="form-label">Name</label><input type="text" class="form-control" id="admin-name" value="Admin User" required></div>
+          <div class="mb-3"><label for="admin-phone" class="form-label">Phone Number</label><input type="tel" class="form-control" id="admin-phone" value="+91 9876543210" pattern="[0-9]{10}" required></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="save-profile-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="viewTicketModal" tabindex="-1" aria-labelledby="viewTicketModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewTicketModalLabel">Ticket Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="viewTicketContent"></div>
+      <div class="modal-footer">
+        <select class="form-select me-2" id="modalStatusSelect" style="width: auto;">
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="resolved">Resolved</option>
+          <option value="denied">Denied</option>
+        </select>
+        <button type="button" class="btn btn-primary" id="updateModalStatusBtn">Update Status</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+  let tickets = [
+    { id: "#001", customer: "karthik", email: "karthik@example.com", subject: "Issue with payment", created: "2025-03-01 14:23:45", status: "processing", description: "Payment failed but amount deducted.", priority: "High", conversation: [{ sender: "Support Agent", message: "Checking your payment records.", time: "2025-03-01 15:15:00" }] },
+    { id: "#002", customer: "siva", email: "siva@example.com", subject: "Account locked", created: "2025-02-27 10:00:00", status: "resolved", description: "Unable to log in.", priority: "Medium", conversation: [{ sender: "Support Agent", message: "Account unlocked.", time: "2025-02-27 11:00:00" }] },
+    { id: "#003", customer: "kalai", email: "kalai@example.com", subject: "Data not working", created: "2025-02-28 09:30:00", status: "processing", description: "No internet access.", priority: "High", conversation: [{ sender: "Support Agent", message: "Investigating the issue.", time: "2025-02-28 10:00:00" }] }
+  ];
+
+  let currentPage = 1;
+
+  function updateCounts() {
+    document.getElementById('total-tickets').textContent = tickets.length;
+    document.getElementById('pending-tickets').textContent = tickets.filter(t => t.status === 'pending').length;
+    document.getElementById('processing-tickets').textContent = tickets.filter(t => t.status === 'processing').length;
+    document.getElementById('resolved-tickets').textContent = tickets.filter(t => t.status === 'resolved' || t.status === 'denied').length;
+  }
+
+  function filterTickets() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const searchQuery = document.getElementById('searchTicket').value.toLowerCase();
+
+    return tickets.filter(t => {
+      const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
+      const matchesSearch = t.id.toLowerCase().includes(searchQuery) || t.customer.toLowerCase().includes(searchQuery) || t.subject.toLowerCase().includes(searchQuery);
+      return matchesStatus && matchesSearch;
+    });
+  }
+
+  function showTable(status) {
+    document.getElementById('statusFilter').value = status || 'all';
+    populateTicketsTable();
+  }
+
+  function populateTicketsTable() {
+    const filteredTickets = filterTickets();
+    const recordsPerPage = 5; // Fixed for simplicity, could be made configurable
+    const totalRecords = filteredTickets.length;
+    const totalPages = Math.ceil(totalRecords / recordsPerPage);
+    currentPage = Math.min(currentPage, totalPages || 1);
+
+    const start = (currentPage - 1) * recordsPerPage;
+    const end = Math.min(start + recordsPerPage, totalRecords);
+    const paginatedTickets = filteredTickets.slice(start, end);
+
+    document.getElementById('tickets-table').innerHTML = paginatedTickets.map(t => {
+      const statusClass = t.status === 'resolved' ? 'status-active' : t.status === 'pending' ? 'status-warning' : t.status === 'processing' ? 'status-info' : 'status-danger';
+      return `<tr><td><strong>${t.id}</strong></td><td><div class="d-flex align-items-center"><div class="icon-btn me-2"><i class="fas fa-user"></i></div><div><div>${t.customer}</div><small class="text-muted">${t.email}</small></div></div></td><td>${t.subject}</td><td>${new Date(t.created).toLocaleString()}</td><td><select class="form-select form-select-sm status-select" data-id="${t.id}"><option value="pending" ${t.status === 'pending' ? 'selected' : ''}>Pending</option><option value="processing" ${t.status === 'processing' ? 'selected' : ''}>Processing</option><option value="resolved" ${t.status === 'resolved' ? 'selected' : ''}>Resolved</option><option value="denied" ${t.status === 'denied' ? 'selected' : ''}>Denied</option></select></td><td><button class="btn btn-sm btn-primary save-btn" data-id="${t.id}">Save</button><button class="btn btn-sm btn-outline-primary view-btn" data-id="${t.id}"><i class="fas fa-eye"></i></button></td></tr>`;
+    }).join('');
+
+    document.getElementById('showing-records').textContent = `${start + 1}-${end}`;
+    document.getElementById('total-records').textContent = totalRecords;
+    updatePagination(totalPages);
+  }
+
+  function updatePagination(totalPages) {
+    const pagination = document.getElementById('pagination-buttons');
+    pagination.innerHTML = `
+      <button class="btn btn-sm btn-outline-secondary me-2" ${currentPage === 1 ? 'disabled' : ''} id="prev-page"><i class="fas fa-chevron-left"></i></button>
+      ${Array.from({ length: totalPages }, (_, i) => `
+        <button class="btn btn-sm ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline-secondary'} me-1" data-page="${i + 1}">${i + 1}</button>
+      `).join('')}
+      <button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} id="next-page"><i class="fas fa-chevron-right"></i></button>
+    `;
+
+    document.getElementById('prev-page')?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; populateTicketsTable(); } });
+    document.getElementById('next-page')?.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; populateTicketsTable(); } });
+    document.querySelectorAll('.pagination-container button[data-page]').forEach(btn =>
+            btn.addEventListener('click', () => { currentPage = parseInt(btn.dataset.page); populateTicketsTable(); })
+    );
+  }
+
   function setupNavigation() {
     const navLinks = {"user-management": "./userManagement.html", "plan-management": "./planManagement.html", "dashboard": "./dashboard.html", "transaction": "./Transaction.html", "analysis": "./analysis.html", "support": "./support.html"};
-    Object.keys(navLinks).forEach(id => document.getElementById(id).addEventListener("click", () => window.location.href = navLinks[id]));
+    Object.keys(navLinks).forEach(id => document.getElementById(id).addEventListener("click", (e) => { e.preventDefault(); window.location.href = navLinks[id]; }));
   }
 
   function setupSidebarToggle() {
@@ -86,13 +246,147 @@
     hamburger.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); content.classList.toggle('expanded'); });
   }
 
+  function setupSupport() {
+    document.getElementById('searchTicketId').addEventListener('input', (e) => {
+      const value = e.target.value;
+      const ticketResult = document.getElementById('ticketResult');
+      const errorMessage = document.getElementById('errorMessage');
+
+      ticketResult.style.display = 'none';
+      errorMessage.style.display = 'none';
+
+      if (value.length > 0) {
+        const ticket = tickets.find(t => t.id.toLowerCase() === value.toLowerCase());
+        if (ticket) {
+          ticketResult.style.display = 'block';
+          document.getElementById('ticketDetails').textContent = `Ticket Found: ${ticket.id} - ${ticket.subject} (Current Status: ${ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)})`;
+          document.getElementById('updateTicketStatus').value = ticket.status;
+          document.getElementById('updateTicketStatusBtn').onclick = () => {
+            ticket.status = document.getElementById('updateTicketStatus').value;
+            updateCounts();
+            populateTicketsTable();
+            bootstrap.Modal.getInstance(document.getElementById('updateTicketModal')).hide();
+          };
+        } else {
+          errorMessage.style.display = 'block';
+        }
+      }
+    });
+
+    document.getElementById('save-profile-btn').addEventListener('click', () => {
+      const name = document.getElementById('admin-name').value;
+      const phone = document.getElementById('admin-phone').value;
+      if (name && phone.match(/^[0-9]{10}$/)) {
+        localStorage.setItem('adminProfile', JSON.stringify({ name, phone }));
+        alert('Profile updated successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
+      } else {
+        alert('Please enter valid name and 10-digit phone number');
+      }
+    });
+
+    const storedProfile = localStorage.getItem('adminProfile');
+    if (storedProfile) {
+      const profile = JSON.parse(storedProfile);
+      document.getElementById('admin-name').value = profile.name;
+      document.getElementById('admin-phone').value = profile.phone;
+    }
+
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.setTextColor(67, 97, 238);
+      doc.text('RechargeFlow - Support Tickets Report', 10, 20);
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 10, 30);
+      doc.text(`Filter: ${document.getElementById('statusFilter').options[document.getElementById('statusFilter').selectedIndex].text}`, 10, 40);
+
+      const tableData = filterTickets().map(t => [t.id, t.customer, t.subject, new Date(t.created).toLocaleString(), t.status.charAt(0).toUpperCase() + t.status.slice(1)]);
+      doc.autoTable({
+        startY: 50,
+        head: [['Ticket ID', 'Customer', 'Subject', 'Created', 'Status']],
+        body: tableData,
+        theme: 'grid',
+        styles: { fontSize: 10, cellPadding: 3, textColor: [33, 37, 41] },
+        headStyles: { fillColor: [67, 97, 238], textColor: [255, 255, 255] },
+        alternateRowStyles: { fillColor: [248, 249, 250] },
+        margin: { top: 50 }
+      });
+
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text('© RechargeFlow', 10, doc.internal.pageSize.height - 10);
+      doc.save(`RechargeFlow_Support_Tickets_${new Date().toISOString().split('T')[0]}.pdf`);
+    });
+
+    document.getElementById('tickets-table').addEventListener('click', (e) => {
+      const id = e.target.closest('.save-btn')?.dataset.id || e.target.closest('.view-btn')?.dataset.id;
+      if (!id) return;
+      const ticket = tickets.find(t => t.id === id);
+
+      if (e.target.closest('.save-btn')) {
+        ticket.status = e.target.closest('tr').querySelector('.status-select').value;
+        updateCounts();
+        populateTicketsTable();
+        alert(`Status for Ticket ${id} updated to: ${ticket.status}`);
+      } else if (e.target.closest('.view-btn')) {
+        document.getElementById('viewTicketModalLabel').textContent = `Ticket ${ticket.id} - ${ticket.subject}`;
+        document.getElementById('viewTicketContent').innerHTML = `
+          <div class="mb-4"><h6 class="fw-bold">Customer Information</h6><div class="d-flex"><div class="me-4"><div class="icon-btn mb-2" style="width: 50px; height: 50px;"><i class="fas fa-user"></i></div></div><div><p class="mb-1"><strong>Name:</strong> ${ticket.customer}</p><p class="mb-1"><strong>Email:</strong> ${ticket.email}</p><p class="mb-1"><strong>Plan:</strong> Unknown</p></div></div></div>
+          <div class="mb-4"><h6 class="fw-bold">Ticket Details</h6><p class="mb-1"><strong>Created:</strong> ${new Date(ticket.created).toLocaleString()}</p><p class="mb-1"><strong>Status:</strong> <span class="badge ${ticket.status === 'resolved' ? 'bg-success' : ticket.status === 'pending' ? 'bg-warning' : ticket.status === 'processing' ? 'bg-info' : 'bg-danger'}">${ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}</span></p><p class="mb-1"><strong>Priority:</strong> ${ticket.priority}</p></div>
+          <div class="mb-4"><h6 class="fw-bold">Description</h6><p>${ticket.description}</p></div>
+          <div class="mb-4"><h6 class="fw-bold">Conversation</h6>${ticket.conversation.map(c => `<div class="card mb-2"><div class="card-body"><div class="d-flex justify-content-between mb-2"><strong>${c.sender}</strong><small>${new Date(c.time).toLocaleString()}</small></div><p class="mb-0">${c.message}</p></div></div>`).join('')}<div class="mb-3"><textarea class="form-control" rows="3" placeholder="Type your reply..." id="replyText"></textarea></div><button class="btn btn-primary" id="sendReplyBtn" data-id="${ticket.id}">Send Reply</button></div>
+        `;
+        document.getElementById('modalStatusSelect').value = ticket.status;
+
+        const modal = new bootstrap.Modal(document.getElementById('viewTicketModal'));
+        modal.show();
+
+        document.getElementById('updateModalStatusBtn').onclick = () => {
+          ticket.status = document.getElementById('modalStatusSelect').value;
+          updateCounts();
+          populateTicketsTable();
+          modal.hide();
+        };
+
+        document.getElementById('sendReplyBtn').onclick = () => {
+          const reply = document.getElementById('replyText').value;
+          if (reply) {
+            ticket.conversation.push({ sender: "Support Agent", message: reply, time: new Date().toISOString() });
+            populateTicketsTable(); // Refresh table to reflect updated status
+            document.getElementById('viewTicketContent').innerHTML = document.getElementById('viewTicketContent').innerHTML.replace(/<textarea[^>]*>.*<\/textarea>/, `<textarea class="form-control" rows="3" placeholder="Type your reply..." id="replyText"></textarea>`); // Reset textarea
+            alert('Reply sent successfully!');
+          }
+        };
+      }
+    });
+
+    document.getElementById('statusFilter').addEventListener('change', () => { currentPage = 1; populateTicketsTable(); });
+    document.getElementById('searchTicket').addEventListener('input', () => { currentPage = 1; populateTicketsTable(); });
+  }
+
+  document.getElementById("logout-btn").addEventListener("click", function (e) {
+    e.preventDefault();
+    const loadingOverlay = document.createElement("div");
+    loadingOverlay.classList.add("position-fixed", "top-0", "start-0", "w-100", "h-100", "bg-dark", "bg-opacity-50", "d-flex", "justify-content-center", "align-items-center", "text-white", "fs-4");
+    loadingOverlay.innerHTML = "Logging out...";
+    document.body.appendChild(loadingOverlay);
+    setTimeout(() => {
+      localStorage.removeItem("loggedIns");
+      document.body.removeChild(loadingOverlay);
+      window.location.href = "../Html_files/login.html";
+    }, 2000);
+  });
+
   document.addEventListener("DOMContentLoaded", () => {
     setupNavigation();
     setupSidebarToggle();
-    document.querySelectorAll('.save-btn').forEach(btn => btn.addEventListener('click', () => alert(`Status for Ticket ${btn.closest('tr').cells[0].textContent} updated to: ${btn.closest('tr').querySelector('.status-select').value}`)));
-    document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => new bootstrap.Modal(document.getElementById('viewTicketModal')).show()));
+    setupSupport();
+    updateCounts();
+    populateTicketsTable();
   });
 </script>
-<script src="../javascript/script.js"></script>
 </body>
 </html>

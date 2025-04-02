@@ -27,10 +27,10 @@
         <h2 class="top-bar-title">Dashboard</h2>
         <div class="top-bar-actions">
             <div class="search-box"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Search..."></div>
-            <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New</button>
+            <button class="btn btn-primary" id="add-new-btn"><i class="fas fa-plus me-2"></i>Add New</button>
             <div class="user-actions">
-                <div class="icon-btn"><i class="fas fa-bell"></i></div>
-                <div class="icon-btn"><i class="fas fa-user"></i></div>
+                <div class="icon-btn" id="notification-btn" data-bs-toggle="modal" data-bs-target="#notificationModal"><i class="fas fa-bell"></i></div>
+                <div class="icon-btn" id="profile-btn" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="fas fa-user"></i></div>
             </div>
         </div>
     </div>
@@ -94,10 +94,84 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">High Priority Notifications</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group list-group-flush" id="notification-list">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            User #123: Payment Failure
+                            <span class="status-badge status-warning">Urgent</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            User #456: Service Complaint
+                            <span class="status-badge status-danger">Critical</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='./support.html'">View All Support Tickets</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Admin Profile</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profile-form">
+                        <div class="mb-3">
+                            <label for="admin-name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="admin-name" value="Admin User" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admin-phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="admin-phone" value="+91 9876543210" pattern="[0-9]{10}" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save-profile-btn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    document.getElementById("logout-btn").addEventListener("click", function (e) {
+        e.preventDefault();
+        logout();
+    });
+
+    function logout() {
+        const loadingOverlay = document.createElement("div");
+        loadingOverlay.classList.add(
+            "position-fixed", "top-0", "start-0", "w-100", "h-100",
+            "bg-dark", "bg-opacity-50", "d-flex", "justify-content-center",
+            "align-items-center", "text-white", "fs-4"
+        );
+        loadingOverlay.innerHTML = "Logging out...";
+        document.body.appendChild(loadingOverlay);
+
+        setTimeout(function () {
+            localStorage.removeItem("loggedIns");
+            document.body.removeChild(loadingOverlay);
+            window.location.href = "../Html_files/login.html";
+        }, 2000);
+    }
+
     function setupNavigation() {
         const navLinks = {
             "user-management": "./userManagement.html",
@@ -107,7 +181,12 @@
             "analysis": "./analysis.html",
             "support": "./support.html"
         };
-        Object.keys(navLinks).forEach(id => document.getElementById(id).addEventListener("click", () => window.location.href = navLinks[id]));
+        Object.keys(navLinks).forEach(id => {
+            document.getElementById(id).addEventListener("click", (e) => {
+                e.preventDefault();
+                window.location.href = navLinks[id];
+            });
+        });
     }
 
     function setupSidebarToggle() {
@@ -120,17 +199,44 @@
         });
     }
 
+    function setupDashboardFeatures() {
+        document.getElementById('add-new-btn').addEventListener('click', () => {
+            window.location.href = './planManagement.html#add-plan';
+        });
+
+        document.getElementById('save-profile-btn').addEventListener('click', () => {
+            const name = document.getElementById('admin-name').value;
+            const phone = document.getElementById('admin-phone').value;
+
+            if (name && phone.match(/^[0-9]{10}$/)) {
+                localStorage.setItem('adminProfile', JSON.stringify({ name, phone }));
+                alert('Profile updated successfully!');
+                bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
+            } else {
+                alert('Please enter valid name and 10-digit phone number');
+            }
+        });
+
+        const storedProfile = localStorage.getItem('adminProfile');
+        if (storedProfile) {
+            const profile = JSON.parse(storedProfile);
+            document.getElementById('admin-name').value = profile.name;
+            document.getElementById('admin-phone').value = profile.phone;
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         setupNavigation();
         setupSidebarToggle();
+        setupDashboardFeatures();
+
         const payments = [
-            { name: "karthik", school: "Popular Plan", amount: "₹100" },
+            { name: "Karthik", school: "Popular Plan", amount: "₹100" },
             { name: "Raj", school: "Unlimited Plan", amount: "₹150" }
         ];
         const paymentList = document.getElementById("payment-list");
         payments.forEach(p => paymentList.innerHTML += `<tr><td>${p.name}</td><td>${p.school}</td><td>${p.amount}</td><td><span class="status-badge status-active">Paid</span></td><td><button class="action-btn">View</button></td></tr>`);
     });
 </script>
-<script src="../javascript/script.js"></script>
 </body>
 </html>
